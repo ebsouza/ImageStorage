@@ -17,12 +17,12 @@ pip3 install -r requirements.txt
 
 2. Clone this project. 
 ```shell
-git clone project
+git clone https://github.com/ebsouza/ImageStorage.git
 ```
 
 3. Enter into project folder.
 ```shell
-cd $project_root
+cd ImageStorage
 ```
 
 4. Run the API.

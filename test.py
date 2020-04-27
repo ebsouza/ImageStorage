@@ -63,7 +63,7 @@ class ApiStorageTestCase(unittest.TestCase):
         example3_size = os.stat(storage_path + 'example3' + image_extension).st_size / 1000000
 
         #Request
-        res = self.client().get('/image')
+        res = self.client().get('/image/all')
         
         #Expected Json
         json_file_1 = {'file_name': 'example1' + image_extension, 'size (Mb)': example1_size}
@@ -92,11 +92,11 @@ class ApiStorageTestCase(unittest.TestCase):
 
         #Remove all images in storage
         for file_ in files:
-            if isGitignore(file_) : continue
-            os.remove(storage_path + file_ + image_extension)
-
+            if not isGitignore(file_): 
+                os.remove(storage_path + file_ )
+            
         #Test
-        res = self.client().get('/image')
+        res = self.client().get('/image/all')
         self.assertEqual(res.status_code, 404)
 
     

@@ -1,6 +1,6 @@
 # Image Storage 
 
-Now you can storage image in remote machine using HTTP requests.
+Store images on remote machine using HTTP requests.
 
 ![](readme/ImageStorage-en.png)
 

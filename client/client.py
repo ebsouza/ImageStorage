@@ -3,7 +3,7 @@ import base64
 import json
 
 URL = "http://localhost:5000/"
-imageExtension = '.jpg'
+IMAGE_EXTENSION = '.jpg'
 # Image
 
 #http://localhost:5000/image/all [GET]
@@ -23,7 +23,7 @@ def recoverEspecificImage(id):
     image_64_encode = image_64_encode.encode("utf-8")
     image_64_decode = base64.decodebytes(image_64_encode) 
 
-    fileName = imageJson['ID'] + imageExtension
+    fileName = imageJson['ID'] + IMAGE_EXTENSION
 
     with open(fileName, 'wb') as image_result:
         image_result.write(image_64_decode)
@@ -41,7 +41,7 @@ def insertImage(id):
     json_file = {}
     json_file['ID'] = id
 
-    image = open( id + imageExtension, 'rb') 
+    image = open( id + IMAGE_EXTENSION, 'rb')
     image_read = image.read() 
     image_64_encode = base64.encodestring(image_read) 
     image_64_encode = image_64_encode.decode("utf-8")

@@ -24,7 +24,7 @@ def create_app(config_name, image_extension):
 
     @app.route('/')
     def about():
-        return 'Image Storage API. By: Erick Barbosa'
+        return 'Image Storage API. By: EBSouza'
 
 
     # --- GET Methods

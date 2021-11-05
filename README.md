@@ -45,49 +45,84 @@ Run all tests with test.py script.
 $ python test.py
 ```
 
-## 3. API Resources
+## 3. API Reference
 
-**image**
+#### Create an image
 
-[POST]
+```http
+  POST /image
+```
 
-> http://localhost:5000/image
->
-> Send a json = {'ID': image_id , 'image_data': image_base64} to API
-
-
-[GET]
-
-> http://localhost:5000/image/<image_id>
->
-> Return the image 'image_id.extension'
-
-
-[GET]
-
-> http://localhost:5000/image
->
-> Return a json list [{'file_name' : file name with extension , 'size (Mb)' : image size in Mb}]
+```javascript
+// payload
+{ 
+    "ID": <image_id>,
+    "image_data": <image.base64>
+}
+```
 
 
-[DELETE]
+#### Get one image
 
-> http://localhost:5000/image/<image_id>
->
-> Remove a specific image
+```http
+  GET /image/<ID>
+```
 
+```javascript
+// return
+{ 
+    "ID": <image_id>,
+    "image_data": <image.base64>
+}
+```
 
-> http://localhost:5000/image/all
->
-> Clean up the storage
+#### Get all images
 
-**info**
+```http
+  GET /image/all
+```
 
-[GET]
+```javascript
+// return
+{ 
+    [
+        {
+            "file_name": "image_example_1",
+            "size (Mb)": 1.2
+        },
+        {
+            "file_name": "image_example_2",
+            "size (Mb)": 0.8
+        }
+    ]   
+}
+```
 
-> http://localhost:5000/info
->
-> Return a json {'number of images' : number of images , 'total size (Mb)' : total size in Mb}
+#### Delete one image
+
+```http
+  DELETE /image/<ID>
+```
+
+#### Delete all images
+
+```http
+  DELETE /image/all
+```
+
+#### Recover system info
+
+```http
+  GET /info
+```
+
+```javascript
+// return
+{ 
+    "number of images": 53,
+    "total size (Mb)": 72.7
+}
+```
 
 
 ## 4. License

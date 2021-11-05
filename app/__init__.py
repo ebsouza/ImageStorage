@@ -1,8 +1,6 @@
-from flask import Flask, jsonify, abort, request, make_response, url_for
+from flask import Flask, jsonify, abort, request
 import base64
 import os
-import json
-from PIL import Image 
 
 from instance.config import app_config
 

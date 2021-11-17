@@ -6,35 +6,37 @@ Store images on remote machine using HTTP requests.
 
 Icons made by Those Icons and catkuro from 'www.flaticon.com'
 
-## 1. Usage
+## 1. Turning on the server
 
 You need an environment with Python 3.x and packages listed on requirements.txt file. 
 
-1. Install packages listed on requirements file.
-```shell
-pip3 install -r requirements.txt
-```
-
-2. Clone this project. 
+1. Clone this project 
 ```shell
 git clone https://github.com/ebsouza/ImageStorage.git
 ```
 
-3. Enter into project folder.
+2. Enter into project folder
 ```shell
 cd ImageStorage
 ```
 
-4. Run the API.
+3. Install packages listed on requirements.txt file
+```shell
+pip install -r requirements.txt
+```
+
+4. Run the API
 ```shell
 $ python run.py
 ```
 
-5. Check the returned message. 
+5. Make suer the server is turned on 
 ```shell
-# The server will send this string -> 'Image Storage API. by: Erick Barbosa'
-$ curl http://localhost:5000/
+$ curl http://<host-ip>:5000/
 ```
+
+'Image Storage API. By: EBSouza' should appear on the screen.
+
 
 
 ## 2. Test

@@ -49,6 +49,8 @@ $ python test.py
 
 ## 3. API Reference
 
+See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/client).
+
 #### Create an image
 
 ```http

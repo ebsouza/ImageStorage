@@ -44,8 +44,9 @@ $ curl http://<host-ip>:5000/
 Run all tests with test.py script.
 
 ```shell
-$ python test.py
+$ python test.py #Broken for a while
 ```
+
 
 ## 3. API Reference
 

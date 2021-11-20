@@ -1,4 +1,5 @@
 import os
+import base64
 from instance.config import app_config
 
 app_settings = os.getenv('APP_SETTINGS', 'development')
@@ -6,8 +7,12 @@ PATH_TO_IMAGE = app_config[app_settings][1]
 image_extension = os.getenv('FILE_EXTENSION')
 
 
-def create_image():
-    pass
+def create_image(image_id, image_64_decoded):
+
+    image_path = PATH_TO_IMAGE + image_id + image_extension
+
+    with open(image_path, 'wb') as image_result:
+        image_result.write(image_64_decoded)
 
 
 def remove_image(image_id):
@@ -38,5 +43,8 @@ def encode_image(image):
     pass
 
 
-def decode_image(image):
-    pass
+def decode_image(image_encoded):
+    image_64_encode = image_encoded
+    image_64_encode = image_64_encode.encode("utf-8")
+
+    return base64.decodebytes(image_64_encode)

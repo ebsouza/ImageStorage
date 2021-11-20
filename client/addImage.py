@@ -8,7 +8,7 @@ http://<URL>/image (POST)
 
 
 def add_image(image_id):
-    resource = URL + 'image'
+    url = URL + 'image'
     json_file = dict()
     json_file['ID'] = image_id
 
@@ -19,8 +19,8 @@ def add_image(image_id):
 
     json_file['image_data'] = image_64_encode
 
-    r = requests.post(url=resource, json=json_file)
-    print(r)
+    response = requests.post(url=url, json=json_file)
+    print(f"URL: {url} - Response: {response.content} - Status Code: {response}")
 
 
 if __name__ == '__main__':

@@ -24,5 +24,5 @@ def get_image(image_id):
 
 
 if __name__ == '__main__':
-    image_id = "example"
+    image_id = "example1"
     get_image(image_id)

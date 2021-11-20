@@ -5,7 +5,7 @@ from flask import jsonify, abort, request
 from instance.config import app_config
 from . import main as app
 
-from .model import remove_image, remove_images
+from .model import remove_image, remove_images, decode_image, create_image
 
 app_settings = os.getenv('APP_SETTINGS', 'development')
 path_to_images = app_config[app_settings][1]
@@ -91,45 +91,19 @@ def sys_info():
 
 
 @app.route('/image', methods=['POST'])
-def set_image():
-    file_json = {}
-
-    # Load JSON
-    try:
-        file_json = request.get_json()
-    except Exception as e:
-        error = 'Cant open Json.'
-        print(error + 'Reason: %s' % (e))
-        return error, 400
-
-    # Check wheter Json is empty
-    if file_json == {}:
-        return 'Json is empty', 400
-
-    # Decode image
+def create_image_view():
     try:
         image_64_encode = request.get_json()['image_data']
-        image_64_encode = image_64_encode.encode("utf-8")
-        # image_64_decode = base64.decodestring(image_64_encode) #Deprecated
-        image_64_decode = base64.decodebytes(image_64_encode)
-    except Exception as e:
-        error = 'Invalid data on Json.'
-        print(error + 'Reason: %s' % (e))
-        return error, 400
+        image_64_decoded = decode_image(image_64_encode)
+        image_id = request.get_json()['ID']
 
-    # Write the image
-    try:
-        image_path = path_to_images + request.get_json()['ID'] + image_extension
+        create_image(image_id, image_64_decoded)
 
-        with open(image_path, 'wb') as image_result:
-            image_result.write(image_64_decode)
+        return {'data': image_id}, 201
 
     except Exception as e:
-        error = 'Unexpected error: Failed to create image.'
-        print(error + 'Reason: %s' % (e))
-        return error, 500
-
-    return 'Image has been created.', 201
+        error_message = f"Unexpected error: {e}"
+        return error_message, 500
 
 
 @app.route('/image/<image_id>', methods=['DELETE'])

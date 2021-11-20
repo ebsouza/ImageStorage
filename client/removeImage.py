@@ -7,9 +7,9 @@ http://<URL>/image/<image_id> (DELETE)
 
 
 def remove_image(image_id):
-    resource = f"{URL}image/{image_id}"
-    r = requests.delete(url=resource)
-    print(r)
+    url = f"{URL}image/{image_id}"
+    response = requests.delete(url=url)
+    print(f"URL: {url} - Response: {response.content} - Status Code: {response}")
 
 
 if __name__ == '__main__':

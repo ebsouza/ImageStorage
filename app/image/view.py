@@ -136,11 +136,11 @@ def set_image():
 def remove_image_view(image_id):
     try:
         if image_id == "all":
-            remove_images()
+            removed = remove_images()
         else:
-            remove_image(image_id)
+            removed = remove_image(image_id)
 
-        return 'OK', 200
+        return {'data': removed}, 200
     except Exception as e:
         error_message = f"Unexpected error: {e}"
         return error_message, 500

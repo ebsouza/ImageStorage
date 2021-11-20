@@ -14,16 +14,21 @@ def remove_image(image_id):
     image = f"{PATH_TO_IMAGE}{image_id}{image_extension}"
     os.remove(image)
 
+    return image_id
+
 
 def remove_images():
+    images_id = []
     for filename in os.listdir(PATH_TO_IMAGE):
         file_path = os.path.join(PATH_TO_IMAGE, filename)
         try:
             if os.path.isfile(file_path):
                 os.remove(file_path)
+                images_id.append(filename)
         except Exception as e:
             print('Failed to delete %s. Reason: %s' % (file_path, e))
 
+    return images_id
 
 def get_image():
     pass

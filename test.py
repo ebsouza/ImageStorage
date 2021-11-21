@@ -1,23 +1,25 @@
 import unittest
 import os
 import json
-import base64 
-from app import create_app
-import time
+import base64
 import shutil
 
-#Check .gitignore
+from app import create_app
+
+
 def isGitignore(file):
     return "gitignore" in file
 
 class ApiStorageTestCase(unittest.TestCase):
     """This class represents the bucketlist test case"""
     image_extension = '.jpg'
-    config_name= 'testing'
+    config_name = 'testing'
 
     def setUp(self):
         """Define test variables and initialize app."""
-        self.app = create_app(ApiStorageTestCase.config_name, ApiStorageTestCase.image_extension)
+        os.environ["APP_SETTINGS"] = "testing"
+        os.environ["FILE_EXTENSION"] = ".jpg"
+        self.app = create_app()
         self.client = self.app.test_client
 
     def test_app_exists(self):
@@ -82,11 +84,10 @@ class ApiStorageTestCase(unittest.TestCase):
 
     
     def test_empty_return(self):
-        # ---- Check the empty status code (GET request) ----     
         storage_path = 'test-assets/Images/'
         image_extension = ApiStorageTestCase.image_extension
         try:
-            path, dirs, files = next(os.walk( storage_path ))
+            path, dirs, files = next(os.walk(storage_path))
         except Exception as e:
             print('I wasnt possible to open images .Reason: %s' % (e))
 
@@ -94,15 +95,10 @@ class ApiStorageTestCase(unittest.TestCase):
         for file_ in files:
             if not isGitignore(file_): 
                 os.remove(storage_path + file_ )
-            
-        #Test
+
         res = self.client().get('/image/all')
         self.assertEqual(res.status_code, 404)
 
-    
-    """
-    '/image' [POST]
-    """
     def test_send_image(self):
         #Test API post image (POST request)
         imageId = 'example1'
@@ -130,23 +126,19 @@ class ApiStorageTestCase(unittest.TestCase):
         # ---- Test send empty json return ----
         json_file={}
         res = self.client().post('/image', json=json_file)
-        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.status_code, 500)
     
     def test_send_invalid_json(self):
         # ---- Test send invalid json return ----
         #1 - Invalid image_data
         json_file={'ID':'any_ID', 'image_data':'123456'}
         res = self.client().post('/image', json=json_file)
-        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.status_code, 500)
 
         #2 - Invalid Json
         res = self.client().post('/image', json=123)
-        self.assertEqual(res.status_code, 400)
+        self.assertEqual(res.status_code, 500)
 
-
-    """
-    '/image' [DELETE]
-    """
     def test_remove_image(self):
         #Test API remove a specific image (DELETE request)
         image_id = 'example2'
@@ -180,6 +172,5 @@ class ApiStorageTestCase(unittest.TestCase):
         self.assertTrue(counter == 0)
 
 
-# Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()

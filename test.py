@@ -35,8 +35,8 @@ class ApiStorageTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
         data = json.loads(response.data)
-        self.assertTrue(data['total size (Mb)'] >= 0)
-        self.assertTrue(data['number of images'] >= 0)
+        self.assertTrue(data['total_size'] >= 0)
+        self.assertTrue(data['total_images'] >= 0)
 
     def test_get_image_all(self):
         """ /image/all (GET) """
@@ -92,7 +92,7 @@ class ApiStorageTestCase(unittest.TestCase):
         absolute_path = os.path.abspath(image_path)
 
         json_file = dict()
-        json_file['ID'] = image_id
+        json_file['id'] = image_id
         json_file['image_data'] = create_image_encode(absolute_path)
 
         response = self.client().post('/image', json=json_file)

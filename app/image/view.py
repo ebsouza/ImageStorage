@@ -5,6 +5,7 @@ from flask import jsonify, abort, request
 from instance.config import app_config
 from . import main as app
 
+from .utils import get_total_images, get_total_size
 from .model import remove_image, remove_images, decode_image, create_image
 
 app_settings = os.getenv('APP_SETTINGS', 'development')
@@ -65,29 +66,16 @@ def get_image_list(image_id):
 
 @app.route('/info', methods=['GET'])
 def sys_info():
-    # INFO
-    # --nFiles
     try:
-        path, dirs, files = next(os.walk(path_to_images))
+        data = dict()
+        absolute_path = os.path.abspath(path_to_images)
+        data['total_images'] = get_total_images(absolute_path)
+        data['total_size'] = get_total_size(absolute_path)
+        return jsonify(data), 200
+
     except Exception as e:
-        error = 'Failed to access directory.'
-        print(error + 'Reason: %s' % (e))
-        return error, 500
-
-    nFiles = len(files)
-
-    # --size
-    totalSize = 0
-    for file in files:
-        filePath = path_to_images + file
-        totalSize += os.stat(filePath).st_size
-    totalSize = totalSize / 1000000  # convert to Mb
-
-    payload = {}
-    payload['number of images'] = nFiles
-    payload['total size (Mb)'] = totalSize
-
-    return jsonify(payload), 200
+        error_message = f"Unexpected error: {e}"
+        return error_message, 500
 
 
 @app.route('/image', methods=['POST'])
@@ -95,7 +83,7 @@ def create_image_view():
     try:
         image_64_encode = request.get_json()['image_data']
         image_64_decoded = decode_image(image_64_encode)
-        image_id = request.get_json()['ID']
+        image_id = request.get_json()['id']
 
         create_image(image_id, image_64_decoded)
 

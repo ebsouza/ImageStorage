@@ -8,8 +8,8 @@ http://<URL>/info (GET)
 
 def get_storage_info():
     resource = f"{URL}info"
-    r = requests.get(url=resource)
-    info = r.json()
+    response = requests.get(url=resource)
+    info = response.json()
     print(info)
 
 

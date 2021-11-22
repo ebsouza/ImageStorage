@@ -6,7 +6,7 @@ from instance.config import app_config
 from . import main as app
 
 from .utils import get_total_images, get_total_size
-from .model import remove_image, remove_images, decode_image, create_image
+from .model import remove_image, remove_images, decode_image, create_image, encode_image
 
 app_settings = os.getenv('APP_SETTINGS', 'development')
 path_to_images = app_config[app_settings][1]
@@ -18,54 +18,28 @@ def about():
     return 'Image Storage API. By: EBSouza'
 
 
+@app.route('/image', defaults={'image_id': ''})
 @app.route('/image/<image_id>', methods=['GET'])
-def get_image_list(image_id):
-    if image_id == "all":
-        image_list = []
-
-        try:
-            print(path_to_images)
-            path, dirs, files = next(os.walk(path_to_images))
-        except Exception as e:
-            error = 'Failed to access directory.'
-            print(error + 'Reason: %s' % (e))
-            return error, 500
-
-        if len(files) == 0:
-            return 'No image in storage', 404
-
-        for file in files:
-            image_info = {}
-            image_info['file_name'] = file
-            filePath = path_to_images + file
-            mb = os.stat(filePath).st_size / 1000000
-            image_info['size (Mb)'] = mb
-            image_list.append(image_info)
-
-        return jsonify(image_list), 200
+def get_image_view(image_id):
+    image_ids = list()
+    images = list()
+    if not image_id:
+        path, dirs, files = next(os.walk(path_to_images))
+        image_ids = [image_id.rsplit(".", 1)[0] for image_id in files]
     else:
+        image_ids.append(image_id)
 
-        json_file = {}
-        json_file['ID'] = image_id
+    for image_id in image_ids:
+        images.append({
+                        "id": image_id,
+                        "encoded_image": encode_image(image_id)
+                      })
 
-        try:
-            image = open(path_to_images + image_id + image_extension, 'rb')
-        except Exception as e:
-            error = 'Unexpected error: Failed to open the image.'
-            print(error + 'Reason: %s' % (e))
-            return error, 500
-
-        image_read = image.read()
-        image_64_encode = base64.encodestring(image_read)
-        image_64_encode = image_64_encode.decode("utf-8")
-
-        json_file['image_data'] = image_64_encode
-
-        return jsonify(json_file), 200
+    return jsonify(images), 200
 
 
 @app.route('/info', methods=['GET'])
-def sys_info():
+def sys_info_view():
     try:
         data = dict()
         absolute_path = os.path.abspath(path_to_images)

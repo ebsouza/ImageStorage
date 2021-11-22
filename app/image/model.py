@@ -34,12 +34,19 @@ def remove_images():
 
     return images_id
 
-def get_image():
+
+def get_image(image_id):
     pass
 
 
-def encode_image(image):
-    pass
+def encode_image(image_id):
+    image_path = PATH_TO_IMAGE + image_id + IMAGE_EXTENSION
+    with open(image_path, 'rb') as image:
+        image_read = image.read()
+        image_64_encode = base64.encodestring(image_read)
+        image_64_encode = image_64_encode.decode("utf-8")
+
+    return image_64_encode
 
 
 def decode_image(image_encoded):

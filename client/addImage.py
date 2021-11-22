@@ -10,7 +10,7 @@ http://<URL>/image (POST)
 def add_image(image_id):
     url = URL + 'image'
     json_file = dict()
-    json_file['ID'] = image_id
+    json_file['id'] = image_id
 
     image = open(image_id + IMAGE_EXTENSION, 'rb')
     image_read = image.read()

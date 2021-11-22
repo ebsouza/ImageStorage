@@ -38,52 +38,39 @@ class ApiStorageTestCase(unittest.TestCase):
         self.assertTrue(data['total_size'] >= 0)
         self.assertTrue(data['total_images'] >= 0)
 
+    def test_get_image(self):
+        """ /image/all (GET) """
+        base_path = 'test-assets/'
+
+        shutil.copyfile(base_path + 'example1' + self.image_extension, self.image_path + 'example1' + self.image_extension)
+
+        response = self.client().get('/image/example1')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 1)
+        self.assertEqual(response.json[0]['id'], 'example1')
+        self.assertTrue(isinstance(response.json[0]['encoded_image'], str))
+
+        os.remove(self.image_path + 'example1' + self.image_extension)
+
     def test_get_image_all(self):
         """ /image/all (GET) """
         base_path = 'test-assets/'
 
-        # Copy images to storage
         shutil.copyfile(base_path + 'example1' + self.image_extension, self.image_path + 'example1' + self.image_extension)
         shutil.copyfile(base_path + 'example2' + self.image_extension, self.image_path + 'example2' + self.image_extension)
-        shutil.copyfile(base_path + 'example3' + self.image_extension, self.image_path + 'example3' + self.image_extension)
 
-        # Get image size
-        example1_size = os.stat(self.image_path + 'example1' + self.image_extension).st_size / 1000000
-        example2_size = os.stat(self.image_path + 'example2' + self.image_extension).st_size / 1000000
-        example3_size = os.stat(self.image_path + 'example3' + self.image_extension).st_size / 1000000
-
-        # Request
-        res = self.client().get('/image/all')
+        response = self.client().get('/image')
         
-        # Expected Json
-        json_file_1 = {'file_name': 'example1' + self.image_extension, 'size (Mb)': example1_size}
-        json_file_2 = {'file_name': 'example2' + self.image_extension, 'size (Mb)': example2_size}
-        json_file_3 = {'file_name': 'example3' + self.image_extension, 'size (Mb)': example3_size}
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json), 2)
+        self.assertTrue(isinstance(response.json[0]['id'], str))
+        self.assertTrue(isinstance(response.json[0]['encoded_image'], str))
+        self.assertTrue(isinstance(response.json[1]['id'], str))
+        self.assertTrue(isinstance(response.json[1]['encoded_image'], str))
 
-        # Test
-        self.assertIn(json_file_1, json.loads(res.data))
-        self.assertIn(json_file_2, json.loads(res.data))
-        self.assertIn(json_file_3, json.loads(res.data))
-        
-        # Cleaning up the storage
         os.remove(self.image_path + 'example1' + self.image_extension)
         os.remove(self.image_path + 'example2' + self.image_extension)
-        os.remove(self.image_path + 'example3' + self.image_extension)
-
-    def test_get_image_all_empty_return(self):
-        """ /image/all (GET) """
-        try:
-            path, dirs, files = next(os.walk(self.image_path))
-        except Exception as e:
-            print('I wasnt possible to open images .Reason: %s' % (e))
-
-        # Remove all images in storage
-        for file_ in files:
-            if not is_gitignore(file_):
-                os.remove(self.image_path + file_)
-
-        response = self.client().get('/image/all')
-        self.assertEqual(response.status_code, 404)
 
     def test_send_image(self):
         """ /image/<image_id> (POST) """

@@ -1,3 +1,4 @@
+import os
 import base64
 from PIL import Image
 
@@ -14,3 +15,12 @@ def create_image_encode(image_path):
         image_64_encode = base64.encodebytes(image_read)
 
     return image_64_encode.decode("utf-8")
+
+
+def get_total_images(path):
+    try:
+        path, dirs, files = next(os.walk(path))
+    except Exception as e:
+        print('I wasnt possible to open images .Reason: %s' % (e))
+
+    return len(files)

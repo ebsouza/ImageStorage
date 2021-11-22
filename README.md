@@ -67,7 +67,7 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 ```javascript
 // payload
 { 
-    "ID": <image_id>,
+    "id": <image_id>,
     "image_data": <image.base64>
 }
 ```
@@ -76,21 +76,7 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 #### Get one image
 
 ```http
-  GET /image/<ID>
-```
-
-```javascript
-// return
-{ 
-    "ID": <image_id>,
-    "image_data": <image.base64>
-}
-```
-
-#### Get all images
-
-```http
-  GET /image/all
+  GET /image/<image_id>
 ```
 
 ```javascript
@@ -98,21 +84,39 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 { 
     [
         {
-            "file_name": "image_example_1",
-            "size (Mb)": 1.2
+            "id": <image_id>,
+            "image_data": <image.base64>
+        }
+    ]
+}
+```
+
+#### Get all images
+
+```http
+  GET /image
+```
+
+```javascript
+// return
+{ 
+    [
+        {
+            "id": <image_id>,
+            "image_data": <image.base64>
         },
         {
-            "file_name": "image_example_2",
-            "size (Mb)": 0.8
-        }
-    ]   
+            "id": <image_id>,
+            "image_data": <image.base64>
+        },
+    ]
 }
 ```
 
 #### Delete one image
 
 ```http
-  DELETE /image/<ID>
+  DELETE /image/<image_id>
 ```
 
 #### Delete all images

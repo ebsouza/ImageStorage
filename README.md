@@ -25,12 +25,18 @@ cd ImageStorage
 pip install -r requirements.txt
 ```
 
-4. Run the API
+4. Setup environment variables
+```shell
+$ . instance/setup_production.sh
+```
+
+5. Run the API
 ```shell
 $ python run.py
 ```
 
-5. Make suer the server is turned on 
+
+6. Make suer the server is turned on 
 ```shell
 $ curl http://<host-ip>:5000/
 ```

@@ -21,6 +21,20 @@ def get_total_images(path):
     try:
         path, dirs, files = next(os.walk(path))
     except Exception as e:
-        print('I wasnt possible to open images .Reason: %s' % (e))
+        print("Error: %s" % (e))
 
     return len(files)
+
+
+def get_total_size(path):
+    try:
+        path, dirs, files = next(os.walk(path))
+        total_size = 0
+        for file in files:
+            file_path = path + file
+            total_size += os.stat(file_path).st_size
+        total_size = total_size / 1000000  # convert to Mb
+    except Exception as e:
+        print("Error: %s" % (e))
+
+    return total_size

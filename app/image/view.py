@@ -1,9 +1,8 @@
 import os
-import base64
-from flask import jsonify, abort, request
+from flask import jsonify, request
 
-from instance.config import app_config
 from . import main as app
+from instance.config import app_config
 
 from .utils import get_total_images, get_total_size
 from .model import remove_image, remove_images, decode_image, create_image, encode_image

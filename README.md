@@ -2,7 +2,7 @@
 
 Store images on remote machine using HTTP requests.
 
-![](readme/ImageStorage.gif)
+![](readme/ImageStorage_v2.gif)
 
 Icons made by Those Icons and catkuro from 'www.flaticon.com'
 

@@ -122,7 +122,7 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 #### Delete all images
 
 ```http
-  DELETE /image/all
+  DELETE /image
 ```
 
 #### Recover system info

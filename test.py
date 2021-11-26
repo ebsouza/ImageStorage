@@ -39,7 +39,7 @@ class ApiStorageTestCase(unittest.TestCase):
         self.assertTrue(data['total_images'] >= 0)
 
     def test_get_image(self):
-        """ /image/all (GET) """
+        """ /image/<image_id> (GET) """
         base_path = 'test-assets/'
 
         shutil.copyfile(base_path + 'example1' + self.image_extension, self.image_path + 'example1' + self.image_extension)
@@ -54,7 +54,7 @@ class ApiStorageTestCase(unittest.TestCase):
         os.remove(self.image_path + 'example1' + self.image_extension)
 
     def test_get_image_all(self):
-        """ /image/all (GET) """
+        """ /image (GET) """
         base_path = 'test-assets/'
 
         shutil.copyfile(base_path + 'example1' + self.image_extension, self.image_path + 'example1' + self.image_extension)
@@ -73,7 +73,7 @@ class ApiStorageTestCase(unittest.TestCase):
         os.remove(self.image_path + 'example2' + self.image_extension)
 
     def test_send_image(self):
-        """ /image/<image_id> (POST) """
+        """ /image (POST) """
         image_id = 'example1'
         image_path = f"test-assets/{image_id}{self.image_extension}"
         absolute_path = os.path.abspath(image_path)
@@ -87,21 +87,21 @@ class ApiStorageTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 201)
 
     def test_send_empty_json(self):
-        """ /image/<image_id> (POST) """
+        """ /image (POST) """
         json_file = dict()
         response = self.client().post('/image', json=json_file)
 
         self.assertEqual(response.status_code, 500)
     
     def test_send_invalid_image_data(self):
-        """ /image/<image_id> (POST) """
-        json_file = {'ID': 'any_ID', 'image_data': '123456'}
+        """ /image (POST) """
+        json_file = {'id': 'any_ID', 'image_data': '123456'}
         response = self.client().post('/image', json=json_file)
 
         self.assertEqual(response.status_code, 500)
 
     def test_send_invalid_json(self):
-        """ /image/<image_id> (POST) """
+        """ /image (POST) """
         response = self.client().post('/image', json=123)
 
         self.assertEqual(response.status_code, 500)
@@ -117,7 +117,7 @@ class ApiStorageTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_remove_all_images(self):
-        """ /image/all (DELETE) """
+        """ /image (DELETE) """
 
         base_path = 'test-assets/'
 
@@ -125,7 +125,7 @@ class ApiStorageTestCase(unittest.TestCase):
         shutil.copyfile(base_path + "example2" + self.image_extension, self.image_path + "example2" + self.image_extension)
         shutil.copyfile(base_path + "example3" + self.image_extension, self.image_path + "example3" + self.image_extension)
 
-        self.client().delete('/image/all')
+        self.client().delete('/image')
 
         total_images = get_total_images(self.image_path)
 

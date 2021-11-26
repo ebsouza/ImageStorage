@@ -67,10 +67,11 @@ def create_image_view():
         return error_message, 500
 
 
+@app.route('/image', defaults={'image_id': ''}, methods=['DELETE'])
 @app.route('/image/<image_id>', methods=['DELETE'])
 def remove_image_view(image_id):
     try:
-        if image_id == "all":
+        if not image_id:
             removed = remove_images()
         else:
             removed = remove_image(image_id)

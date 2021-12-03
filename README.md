@@ -4,7 +4,16 @@ Store images on remote machine using HTTP requests.
 
 ![](readme/ImageStorage_v2.gif)
 
-Icons made by Those Icons and catkuro from 'www.flaticon.com'
+(Icons made by Those Icons and catkuro from 'www.flaticon.com')
+
+What could come next?
+
+- Auth system;
+- Cryptography;
+- Async requests;
+- gRPC;
+- Image processing on Background jobs.
+
 
 ## 1. Turning on the server
 

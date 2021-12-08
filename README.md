@@ -143,8 +143,8 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 ```javascript
 // return
 { 
-    "number of images": 53,
-    "total size (Mb)": 72.7
+    "total_images": 23,
+    "total_size": 72.7
 }
 ```
 

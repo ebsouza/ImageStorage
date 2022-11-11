@@ -13,13 +13,13 @@ Store images on remote machine using HTTP requests.
 docker-compose up
 ```
 
-Check if everything is ok
+Checking everything is ok
 
 ```shell
 $ curl http://<host-ip>:5000/
 ```
 
-'Image Storage API. By: EBSouza' should appear on the screen.
+'Image Storage API. By: EBSouza' should appear for you.
 
 ## 1.1 Testing
 

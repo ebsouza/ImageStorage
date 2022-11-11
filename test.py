@@ -3,10 +3,8 @@ import json
 import shutil
 import unittest
 
-from app import create_app
 from instance.config import app_config
-from app.image.utils import get_total_images, create_image_encode
-
+from src.app import create_app
 
 def is_gitignore(file):
     return "gitignore" in file
@@ -74,6 +72,8 @@ class ApiStorageTestCase(unittest.TestCase):
 
     def test_send_image(self):
         """ /image (POST) """
+        from src.image.utils import create_image_encode
+        
         image_id = 'example1'
         image_path = f"test-assets/{image_id}{self.image_extension}"
         absolute_path = os.path.abspath(image_path)
@@ -118,6 +118,7 @@ class ApiStorageTestCase(unittest.TestCase):
 
     def test_remove_all_images(self):
         """ /image (DELETE) """
+        from src.image.utils import get_total_images
 
         base_path = 'test-assets/'
 

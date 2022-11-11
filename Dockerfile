@@ -1,9 +1,8 @@
-FROM python:3.7
-
+FROM python:3.10-slim
 
 WORKDIR /app
 
-RUN pip install --upgrade pip
+RUN pip install --upgrade pip==22.3.1
 
 COPY . .
 

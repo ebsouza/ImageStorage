@@ -24,7 +24,7 @@ $ curl http://<host-ip>:5000/
 ## 1.1 Testing
 
 ```shell
-docker exec <container-name> -it bash -c "python test.py"
+docker exec -it <container-name> bash -c "python test.py"
 ```
 
 ## 2. API Reference

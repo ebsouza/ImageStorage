@@ -86,6 +86,8 @@ class ApiStorageTestCase(unittest.TestCase):
 
         self.assertEqual(response.status_code, 201)
 
+        os.remove(self.image_path + 'example1' + self.image_extension)
+
     def test_send_empty_json(self):
         """ /image (POST) """
         json_file = dict()

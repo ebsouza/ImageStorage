@@ -1,11 +1,13 @@
 import os
+
 from flask import jsonify, request
 
-from . import main as app
 from instance.config import app_config
 
+from . import main as app
+from .model import (create_image, decode_image, encode_image, remove_image,
+                    remove_images)
 from .utils import get_total_images, get_total_size, is_image_file
-from .model import remove_image, remove_images, decode_image, create_image, encode_image
 
 app_settings = os.getenv('APP_SETTINGS', 'development')
 path_to_images = app_config[app_settings][1]

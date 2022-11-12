@@ -1,6 +1,8 @@
-import requests
 import base64
-from constants import URL, IMAGE_EXTENSION
+
+import requests
+from constants import IMAGE_EXTENSION, URL
+
 """
 http://<URL>/image (POST)
 """

@@ -1,5 +1,6 @@
 import requests
 from constants import URL
+
 """
 http://<URL>/image/all (DELETE)
 """

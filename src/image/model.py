@@ -1,5 +1,6 @@
-import os
 import base64
+import os
+
 from instance.config import app_config
 
 from .utils import is_image_file

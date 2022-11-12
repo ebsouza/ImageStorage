@@ -1,6 +1,7 @@
-import requests
 import base64
-from constants import URL, IMAGE_EXTENSION
+
+import requests
+from constants import IMAGE_EXTENSION, URL
 
 """
 http://<URL>/image (POST)
@@ -20,7 +21,8 @@ def add_image(image_id):
     json_file['image_data'] = image_64_encode
 
     response = requests.post(url=url, json=json_file)
-    print(f"URL: {url} - Response: {response.content} - Status Code: {response}")
+    print(
+        f"URL: {url} - Response: {response.content} - Status Code: {response}")
 
 
 if __name__ == '__main__':

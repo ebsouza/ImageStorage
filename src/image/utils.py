@@ -1,5 +1,6 @@
-import os
 import base64
+import os
+
 from PIL import Image
 
 

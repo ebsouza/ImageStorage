@@ -1,9 +1,9 @@
-import os
 import base64
+import os
+
 from instance.config import app_config
 
 from .utils import is_image_file
-
 
 app_settings = os.getenv('APP_SETTINGS', 'testing')
 PATH_TO_IMAGE = app_config[app_settings][1]

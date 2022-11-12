@@ -1,10 +1,11 @@
-import os
 import json
+import os
 import shutil
 import unittest
 
 from instance.config import app_config
 from src.app import create_app
+
 
 def is_gitignore(file):
     return "gitignore" in file
@@ -40,7 +41,8 @@ class ApiStorageTestCase(unittest.TestCase):
         """ /image/<image_id> (GET) """
         base_path = 'test-assets/'
 
-        shutil.copyfile(base_path + 'example1' + self.image_extension, self.image_path + 'example1' + self.image_extension)
+        shutil.copyfile(base_path + 'example1' + self.image_extension,
+                        self.image_path + 'example1' + self.image_extension)
 
         response = self.client().get('/image/example1')
 
@@ -55,11 +57,13 @@ class ApiStorageTestCase(unittest.TestCase):
         """ /image (GET) """
         base_path = 'test-assets/'
 
-        shutil.copyfile(base_path + 'example1' + self.image_extension, self.image_path + 'example1' + self.image_extension)
-        shutil.copyfile(base_path + 'example2' + self.image_extension, self.image_path + 'example2' + self.image_extension)
+        shutil.copyfile(base_path + 'example1' + self.image_extension,
+                        self.image_path + 'example1' + self.image_extension)
+        shutil.copyfile(base_path + 'example2' + self.image_extension,
+                        self.image_path + 'example2' + self.image_extension)
 
         response = self.client().get('/image')
-        
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json), 2)
         self.assertTrue(isinstance(response.json[0]['id'], str))
@@ -73,7 +77,7 @@ class ApiStorageTestCase(unittest.TestCase):
     def test_send_image(self):
         """ /image (POST) """
         from src.image.utils import create_image_encode
-        
+
         image_id = 'example1'
         image_path = f"test-assets/{image_id}{self.image_extension}"
         absolute_path = os.path.abspath(image_path)
@@ -94,7 +98,7 @@ class ApiStorageTestCase(unittest.TestCase):
         response = self.client().post('/image', json=json_file)
 
         self.assertEqual(response.status_code, 500)
-    
+
     def test_send_invalid_image_data(self):
         """ /image (POST) """
         json_file = {'id': 'any_ID', 'image_data': '123456'}
@@ -113,7 +117,8 @@ class ApiStorageTestCase(unittest.TestCase):
         image_id = 'example2'
         base_path = 'test-assets/'
 
-        shutil.copyfile(base_path + image_id + self.image_extension, self.image_path + image_id + self.image_extension)
+        shutil.copyfile(base_path + image_id + self.image_extension,
+                        self.image_path + image_id + self.image_extension)
 
         response = self.client().delete('/image/' + image_id)
         self.assertEqual(response.status_code, 200)
@@ -124,9 +129,12 @@ class ApiStorageTestCase(unittest.TestCase):
 
         base_path = 'test-assets/'
 
-        shutil.copyfile(base_path + "example1" + self.image_extension, self.image_path + "example1" + self.image_extension)
-        shutil.copyfile(base_path + "example2" + self.image_extension, self.image_path + "example2" + self.image_extension)
-        shutil.copyfile(base_path + "example3" + self.image_extension, self.image_path + "example3" + self.image_extension)
+        shutil.copyfile(base_path + "example1" + self.image_extension,
+                        self.image_path + "example1" + self.image_extension)
+        shutil.copyfile(base_path + "example2" + self.image_extension,
+                        self.image_path + "example2" + self.image_extension)
+        shutil.copyfile(base_path + "example3" + self.image_extension,
+                        self.image_path + "example3" + self.image_extension)
 
         self.client().delete('/image')
 

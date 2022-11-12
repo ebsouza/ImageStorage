@@ -2,6 +2,9 @@ import os
 import base64
 from instance.config import app_config
 
+from .utils import is_image_file
+
+
 app_settings = os.getenv('APP_SETTINGS', 'testing')
 PATH_TO_IMAGE = app_config[app_settings][1]
 IMAGE_EXTENSION = os.getenv('FILE_EXTENSION', '.jpg')
@@ -24,6 +27,10 @@ def remove_image(image_id):
 def remove_images():
     images_id = []
     for filename in os.listdir(PATH_TO_IMAGE):
+
+        if not is_image_file(filename):
+            continue
+
         file_path = os.path.join(PATH_TO_IMAGE, filename)
         try:
             if os.path.isfile(file_path):
@@ -43,7 +50,7 @@ def encode_image(image_id):
     image_path = PATH_TO_IMAGE + image_id + IMAGE_EXTENSION
     with open(image_path, 'rb') as image:
         image_read = image.read()
-        image_64_encode = base64.encodestring(image_read)
+        image_64_encode = base64.b64encode(image_read)
         image_64_encode = image_64_encode.decode("utf-8")
 
     return image_64_encode

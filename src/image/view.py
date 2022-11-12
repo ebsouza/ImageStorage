@@ -4,13 +4,12 @@ from flask import jsonify, request
 from . import main as app
 from instance.config import app_config
 
-from .utils import get_total_images, get_total_size
+from .utils import get_total_images, get_total_size, is_image_file
 from .model import remove_image, remove_images, decode_image, create_image, encode_image
 
 app_settings = os.getenv('APP_SETTINGS', 'development')
 path_to_images = app_config[app_settings][1]
 image_extension = os.getenv('FILE_EXTENSION')
-
 
 @app.route('/')
 def about():
@@ -23,8 +22,8 @@ def get_image_view(image_id):
     image_ids = list()
     images = list()
     if not image_id:
-        path, dirs, files = next(os.walk(path_to_images))
-        image_ids = [image_id.rsplit(".", 1)[0] for image_id in files]
+        _, _, files = next(os.walk(path_to_images))
+        image_ids = [image_file.rsplit(".", 1)[0] for image_file in files if is_image_file(image_file)]
     else:
         image_ids.append(image_id)
 

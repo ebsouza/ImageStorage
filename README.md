@@ -6,64 +6,28 @@ Store images on remote machine using HTTP requests.
 
 (Icons made by Those Icons and catkuro from 'www.flaticon.com')
 
-What could come next?
 
-- Auth system;
-- Cryptography;
-- Async requests;
-- gRPC;
-- Image processing on Background jobs.
+## 1. Starting Image Storage
 
-
-## 1. Turning on the server
-
-You need an environment with Python 3.x and packages listed on requirements.txt file. 
-
-1. Clone this project 
 ```shell
-git clone https://github.com/ebsouza/ImageStorage.git
+docker-compose up
 ```
 
-2. Enter into project folder
-```shell
-cd ImageStorage
-```
+Checking everything is ok
 
-3. Install packages listed on requirements.txt file
-```shell
-pip install -r requirements.txt
-```
-
-4. Setup environment variables
-```shell
-$ . instance/setup_production.sh
-```
-
-5. Run the API
-```shell
-$ python run.py
-```
-
-
-6. Make suer the server is turned on 
 ```shell
 $ curl http://<host-ip>:5000/
 ```
 
-'Image Storage API. By: EBSouza' should appear on the screen.
+'Image Storage API. By: EBSouza' should appear for you.
 
-
-
-## 2. Test
-
-Run all tests with test.py script.
+## 1.1 Testing
 
 ```shell
-$ python test.py
+docker exec -it <container-name> bash -c "python test.py"
 ```
 
-
-## 3. API Reference
+## 2. API Reference
 
 See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/client).
 
@@ -149,12 +113,6 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 ```
 
 
-## 4. License
+## 3. License
 
 MIT
-
-
-
-
-
-

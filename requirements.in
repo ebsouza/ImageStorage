@@ -1,0 +1,5 @@
+Flask
+pybase64
+Pillow
+requests
+gunicorn

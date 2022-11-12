@@ -19,7 +19,10 @@ def create_image_encode(image_path):
 
 def get_total_images(path):
     try:
-        path, dirs, files = next(os.walk(path))
+        _, _, files = next(os.walk(path))
+
+        files = [file for file in files if is_image_file(file)]
+
     except Exception as e:
         print("Error: %s" % (e))
 
@@ -31,6 +34,10 @@ def get_total_size(path):
         path, dirs, files = next(os.walk(path))
         total_size = 0
         for file in files:
+
+            if not is_image_file(file):
+                continue
+
             file_path = path + file
             total_size += os.stat(file_path).st_size
         total_size = total_size / 1000000  # convert to Mb
@@ -38,3 +45,7 @@ def get_total_size(path):
         print("Error: %s" % (e))
 
     return total_size
+
+
+def is_image_file(path):
+    return path.rsplit(".")[0] != ''

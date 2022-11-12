@@ -2,7 +2,6 @@ import base64
 import requests
 
 from constants import URL, IMAGE_EXTENSION
-
 """
 http://<URL>/image/<image_id> (GET)
 """

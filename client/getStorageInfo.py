@@ -1,6 +1,5 @@
 import requests
 from constants import URL
-
 """
 http://<URL>/info (GET)
 """

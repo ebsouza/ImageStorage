@@ -11,6 +11,7 @@ app_settings = os.getenv('APP_SETTINGS', 'development')
 path_to_images = app_config[app_settings][1]
 image_extension = os.getenv('FILE_EXTENSION')
 
+
 @app.route('/')
 def about():
     return 'Image Storage API. By: EBSouza'
@@ -23,15 +24,18 @@ def get_image_view(image_id):
     images = list()
     if not image_id:
         _, _, files = next(os.walk(path_to_images))
-        image_ids = [image_file.rsplit(".", 1)[0] for image_file in files if is_image_file(image_file)]
+        image_ids = [
+            image_file.rsplit(".", 1)[0] for image_file in files
+            if is_image_file(image_file)
+        ]
     else:
         image_ids.append(image_id)
 
     for image_id in image_ids:
         images.append({
-                        "id": image_id,
-                        "encoded_image": encode_image(image_id)
-                      })
+            "id": image_id,
+            "encoded_image": encode_image(image_id)
+        })
 
     return jsonify(images), 200
 

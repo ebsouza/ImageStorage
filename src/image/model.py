@@ -10,12 +10,6 @@ PATH_TO_IMAGE = app_config[app_settings][1]
 IMAGE_EXTENSION = os.getenv('FILE_EXTENSION', '.jpg')
 
 
-def create_image(image_id, image_64_decoded):
-    image_path = PATH_TO_IMAGE + image_id + IMAGE_EXTENSION
-
-    with open(image_path, 'wb') as image_result:
-        image_result.write(image_64_decoded)
-
 
 def remove_image(image_id):
     image = f"{PATH_TO_IMAGE}{image_id}{IMAGE_EXTENSION}"

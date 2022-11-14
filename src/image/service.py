@@ -1,34 +1,23 @@
-import base64
 import os
 from functools import singledispatch
 
-from instance.config import app_config
-
+from src.config import load_config
 from src.image.utils import encode_image, is_image_file
 
-#from .model import (create_image, decode_image, encode_image, remove_image,
-#                    remove_images)
-#from .utils import get_total_images, get_total_size, is_image_file
 
-
-app_settings = os.getenv('APP_SETTINGS', 'testing')
-PATH_TO_IMAGE = app_config[app_settings][1]
-IMAGE_EXTENSION = os.getenv('FILE_EXTENSION', '.jpg')
-
-app_settings = os.getenv('APP_SETTINGS', 'development')
-path_to_images = app_config[app_settings][1]
-image_extension = os.getenv('FILE_EXTENSION')
+PATH_TO_IMAGE = load_config()['storage']
+IMAGE_EXTENSION = load_config()['file_extension']
 
 
 def create_image(image_id, image_64_decoded):
-    image_path = PATH_TO_IMAGE + image_id + IMAGE_EXTENSION
+    image_path = f'{PATH_TO_IMAGE}/{image_id}.{IMAGE_EXTENSION}'
 
-    with open(image_path, 'wb') as image_result:
-        image_result.write(image_64_decoded)
+    with open(image_path, 'wb') as image_created:
+        image_created.write(image_64_decoded)
 
 
 def remove_image(image_id):
-    image = f"{PATH_TO_IMAGE}{image_id}{IMAGE_EXTENSION}"
+    image = f"{PATH_TO_IMAGE}/{image_id}.{IMAGE_EXTENSION}"
     os.remove(image)
 
     return image_id
@@ -54,12 +43,12 @@ def remove_images():
 
 @singledispatch
 def get_encoded_image():
-    raise NotImplementedError("Implement process function.")
+    raise NotImplementedError("Implement get_encoded_image function.")
 
 
 @get_encoded_image.register
 def _(image_id: None):
-    _, _, files = next(os.walk(path_to_images))
+    _, _, files = next(os.walk(PATH_TO_IMAGE))
 
     image_ids, enconded_images = list(), list()
     for file in files:

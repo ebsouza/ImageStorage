@@ -5,7 +5,7 @@ services:
     build: .
     environment:
       - APP_SETTINGS=production
-      - FILE_EXTENSION=.jpg
+      - FILE_EXTENSION=jpg
     ports:
       - 5000:5000
     command: "uvicorn wsgi:app --host 0.0.0.0 --port 5000  --reload"

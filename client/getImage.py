@@ -14,7 +14,7 @@ def get_image(image_id):
 
     data = response.json()[0]
 
-    image_64_encode = data['encoded_image']
+    image_64_encode = data['image_data']
     image_64_encode = image_64_encode.encode("utf-8")
     image_64_decode = base64.decodebytes(image_64_encode)
 

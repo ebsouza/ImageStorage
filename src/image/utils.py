@@ -19,12 +19,13 @@ def create_dummy_image(image_path, extension=".jpg"):
     img.save(file_name)
 
 
-#def create_image_encode(image_path):
-#    with open(image_path, 'rb') as image:
-#        image_read = image.read()
-#        image_64_encode = base64.encodebytes(image_read)
-#
-#    return image_64_encode.decode("utf-8")
+# Move to test folder
+def create_image_encode(image_path):
+    with open(image_path, 'rb') as image:
+        image_read = image.read()
+        image_64_encode = base64.encodebytes(image_read)
+
+    return image_64_encode.decode("utf-8")
 
 
 def is_image_file(path):

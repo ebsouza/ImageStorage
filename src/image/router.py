@@ -11,7 +11,7 @@ router = APIRouter()
 
 @router.get('/image')
 @router.get('/image/{image_id}')
-def get_image_view(image_id: str):
+def get_image_view(image_id: str = None):
     
     try:
         image_ids, encoded_images = get_encoded_image(image_id)

@@ -92,10 +92,24 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
   DELETE /image/<image_id>
 ```
 
+```javascript
+// return
+{ 
+    "data": ['image_id']
+}
+```
+
 #### Delete all images
 
 ```http
   DELETE /image
+```
+
+```javascript
+// return
+{ 
+    "data": ['image_id1', 'image_id2', 'image_id3']
+}
 ```
 
 #### Recover system info

@@ -11,10 +11,10 @@ router = APIRouter()
 
 @router.get('/image')
 @router.get('/image/{image_id}')
-def get_image_view(image_id: str = None):
+async def get_image_view(image_id: str = None):
     
     try:
-        image_ids, encoded_images = get_encoded_image(image_id)
+        image_ids, encoded_images = await get_encoded_image(image_id)
     except ImageNotFound:
         raise HTTPException(status_code=404, detail="Image not found")
 
@@ -24,13 +24,13 @@ def get_image_view(image_id: str = None):
 
 
 @router.post('/image')
-def create_image_view(image: ImageGet):
+async def create_image_view(image: ImageGet):
     try:
         image_64_decoded = decode_image(image.image_data)
     except ImageDecodeError:
         raise HTTPException(status_code=400, detail="Not base64 encoded image")
 
-    create_image(image.id, image_64_decoded)
+    await create_image(image.id, image_64_decoded)
 
     return JSONResponse(content= {'data': image.id},  status_code=201)
 

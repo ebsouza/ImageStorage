@@ -1,10 +1,9 @@
 import base64
-import os
 import binascii
 
 from PIL import Image
+import aiofiles
 
-from instance.config import app_config
 from src.image.error import ImageNotFound, ImageDecodeError
 from src.config import load_config
 
@@ -32,11 +31,11 @@ def is_image_file(path):
     return path.rsplit(".")[0] != ''
 
 
-def encode_image(image_id):
+async def encode_image(image_id):
     image_path = f'{PATH_TO_IMAGE}/{image_id}.{IMAGE_EXTENSION}'
     try:
-        with open(image_path, 'rb') as image:
-            image_read = image.read()
+        async with aiofiles.open(image_path, 'rb') as image:
+            image_read = await image.read()
             image_64_encode = base64.b64encode(image_read)
             encoded_image = image_64_encode.decode("utf-8")
 

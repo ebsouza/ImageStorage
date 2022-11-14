@@ -71,7 +71,7 @@ class ApiStorageTestCase(unittest.TestCase):
         os.remove(f'{self.image_path}/example1.{self.image_extension}')
         os.remove(f'{self.image_path}/example2.{self.image_extension}')
 
-    def test_send_image(self):
+    def test_create_image(self):
         """ /image (POST) """
         from src.image.utils import create_image_encode
 
@@ -87,13 +87,7 @@ class ApiStorageTestCase(unittest.TestCase):
 
         self.assertEqual(response.status_code, 201)
 
-        os.remove(f'{self.image_path}/example1.{self.image_extension}')
-
-    def test_send_empty_json(self):
-        """ /image (POST) """
-        response = self.client.post('/image', json=dict())
-
-        self.assertEqual(response.status_code, 422)
+        os.remove(f'{self.image_path}/{image_id}.{self.image_extension}')
 
     def test_send_invalid_image_data(self):
         """ /image (POST) """
@@ -111,26 +105,24 @@ class ApiStorageTestCase(unittest.TestCase):
             f'{base_path}/{image_id}.{self.image_extension}',
             f'{self.image_path}/{image_id}.{self.image_extension}')
 
-        response = self.client.delete('/image/' + image_id)
+        response = self.client.delete(f'/image/{image_id}')
         self.assertEqual(response.status_code, 200)
 
     def test_remove_all_images(self):
         """ /image (DELETE) """
 
         base_path = 'test-assets'
+        NUMBER_OF_IMAGES = 3
 
-        shutil.copyfile(f'{base_path}/example1.{self.image_extension}',
-                        f'{self.image_path}/example1.{self.image_extension}')
-        shutil.copyfile(f'{base_path}/example2.{self.image_extension}',
-                        f'{self.image_path}/example2.{self.image_extension}')
-        shutil.copyfile(f'{base_path}/example3.{self.image_extension}',
-                        f'{self.image_path}/example3.{self.image_extension}')
+        for index in range(1, NUMBER_OF_IMAGES + 1):
+            shutil.copyfile(f'{base_path}/example{index}.{self.image_extension}',
+                        f'{self.image_path}/example{index}.{self.image_extension}')
 
-        self.client.delete('/image')
+        response = self.client.delete('/image')
+        image_ids = response.json()['data']
 
-        total_images = get_total_images()
-
-        self.assertEqual(total_images, 0)
+        self.assertEqual(get_total_images(), 0)
+        self.assertEqual(len(image_ids), NUMBER_OF_IMAGES)
 
 
 if __name__ == "__main__":

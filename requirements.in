@@ -1,5 +1,6 @@
-Flask
-pybase64
+fastapi
+uvicorn
 Pillow
 requests
-gunicorn
+httpx
+aiofiles

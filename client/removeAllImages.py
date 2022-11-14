@@ -7,7 +7,7 @@ http://<URL>/image/all (DELETE)
 
 
 def remove_all_images():
-    url = f"{URL}image/all"
+    url = f"{URL}image/"
     response = requests.delete(url=url)
     print(
         f"URL: {url} - Response: {response.content} - Status Code: {response}")

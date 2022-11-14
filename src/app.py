@@ -1,22 +1,22 @@
 import os
 
-from flask import Flask
+from fastapi import FastAPI
 
-from instance.config import app_config
-
-IMAGE_EXTENSION_LIST = ['.jpg', '.png', '.jpeg']
+from src.config import ALLOWED_EXTENSIONS
+from src.image.router import router as image_router
 
 
 def create_app():
-    app = Flask(__name__)
-    app_settings = os.getenv('APP_SETTINGS', 'development')
-    app.config.from_object(app_config[app_settings][0])
+    app = FastAPI()
 
     file_extension = os.getenv('FILE_EXTENSION')
-    if file_extension not in IMAGE_EXTENSION_LIST:
+    if file_extension not in ALLOWED_EXTENSIONS:
         raise NameError('Extension is not valid.')
 
-    from .image import main as main_blueprint
-    app.register_blueprint(main_blueprint)
+    @app.get('/')
+    def about():
+        return 'Image Storage API. By: EBSouza'
+
+    app.include_router(image_router)
 
     return app

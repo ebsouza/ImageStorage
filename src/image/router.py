@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from starlette.responses import JSONResponse
 
 from src.image.error import ImageDecodeError, ImageNotFound
-from src.image.schemas import ImageGet
+from src.image.schemas import Image
 from src.image.service import (create_image, get_encoded_image,
                                get_total_images, get_total_size, remove_image)
 from src.image.utils import decode_image
@@ -19,13 +19,13 @@ async def get_image_view(image_id: str = None):
     except ImageNotFound:
         raise HTTPException(status_code=404, detail="Image not found")
 
-    data = ImageGet.create_list(ids=image_ids, encoded_images=encoded_images)
+    data = Image.create_list(ids=image_ids, encoded_images=encoded_images)
 
     return JSONResponse(content=data, status_code=200)
 
 
 @router.post('/image')
-async def create_image_view(image: ImageGet):
+async def create_image_view(image: Image):
     try:
         image_64_decoded = decode_image(image.image_data)
     except ImageDecodeError:

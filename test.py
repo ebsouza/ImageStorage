@@ -54,22 +54,23 @@ class ApiStorageTestCase(unittest.TestCase):
         """ /image (GET) """
         base_path = 'test-assets'
 
-        shutil.copyfile(f'{base_path}/example1.{self.image_extension}',
-                        f'{self.image_path}/example1.{self.image_extension}')
-        shutil.copyfile(f'{base_path}/example2.{self.image_extension}',
-                        f'{self.image_path}/example2.{self.image_extension}')
+        NUMBER_OF_IMAGES = 2
+
+        for index in range(1, NUMBER_OF_IMAGES + 1):
+            shutil.copyfile(f'{base_path}/example{index}.{self.image_extension}',
+                        f'{self.image_path}/example{index}.{self.image_extension}')
 
         response = self.client.get('/image')
 
         self.assertEqual(response.status_code, 200)
 
         data = response.json()
-        self.assertEqual(len(data), 2)
+        self.assertEqual(len(data), NUMBER_OF_IMAGES)
         self.assertTrue('id' in data[0])
         self.assertTrue('image_data' in data[0])
 
-        os.remove(f'{self.image_path}/example1.{self.image_extension}')
-        os.remove(f'{self.image_path}/example2.{self.image_extension}')
+        for index in range(1, NUMBER_OF_IMAGES + 1):
+            os.remove(f'{self.image_path}/example{index}.{self.image_extension}')
 
     def test_create_image(self):
         """ /image (POST) """

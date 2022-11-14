@@ -17,14 +17,40 @@ def create_image(image_id, image_64_decoded):
         image_created.write(image_64_decoded)
 
 
-def remove_image(image_id):
+@singledispatch
+def remove_image():
+    raise NotImplementedError("Implement remove_image function.")
+
+
+@remove_image.register
+def _(image_id: str):
     image = f"{PATH_TO_IMAGE}/{image_id}.{IMAGE_EXTENSION}"
     try:
         os.remove(image)
     except FileNotFoundError:
         raise ImageNotFound
 
-    return image_id
+    return [image_id]
+
+
+@remove_image.register
+def _(image_id: None):
+    image_ids = []
+    for filename in os.listdir(PATH_TO_IMAGE):
+
+        if not is_image_file(filename):
+            continue
+
+        file_path = os.path.join(PATH_TO_IMAGE, filename)
+
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+                image_ids.append(filename)
+        except Exception as e:
+            print('Failed to delete %s. Reason: %s' % (file_path, e))
+
+    return image_ids
 
 
 @singledispatch

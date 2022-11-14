@@ -35,14 +35,15 @@ def create_image_view(image: ImageGet):
     return JSONResponse(content= {'data': image.id},  status_code=201)
 
 
+@router.delete('/image')
 @router.delete('/image/{image_id}')
-def remove_image_view(image_id: str):
+def remove_image_view(image_id: str = None):
     try:
-        remove_image(image_id)
+        image_ids = remove_image(image_id)
     except ImageNotFound:
         raise HTTPException(status_code=404, detail="Image not found")
 
-    return JSONResponse(content= {'data': image_id},  status_code=200)
+    return JSONResponse(content= {'data': image_ids},  status_code=200)
 
 
 @router.get('/info')

@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 
 from src.app import create_app
 from src.config import load_config
+from src.image.service import get_total_images
 
 
 def is_gitignore(file):
@@ -112,24 +113,23 @@ class ApiStorageTestCase(unittest.TestCase):
         response = self.client.delete('/image/' + image_id)
         self.assertEqual(response.status_code, 200)
 
-#    def test_remove_all_images(self):
-#        """ /image (DELETE) """
-#        from src.image.utils import get_total_images
-#
-#        base_path = 'test-assets/'
-#
-#        shutil.copyfile(base_path + "example1" + self.image_extension,
-#                        self.image_path + "example1" + self.image_extension)
-#        shutil.copyfile(base_path + "example2" + self.image_extension,
-#                        self.image_path + "example2" + self.image_extension)
-#        shutil.copyfile(base_path + "example3" + self.image_extension,
-#                        self.image_path + "example3" + self.image_extension)
-#
-#        self.client.delete('/image')
-#
-#        total_images = get_total_images(self.image_path)
-#
-#        self.assertEqual(total_images, 0)
+    def test_remove_all_images(self):
+        """ /image (DELETE) """
+        
+        base_path = 'test-assets'
+
+        shutil.copyfile(f'{base_path}/example1.{self.image_extension}',
+                        f'{self.image_path}/example1.{self.image_extension}')
+        shutil.copyfile(f'{base_path}/example2.{self.image_extension}',
+                        f'{self.image_path}/example2.{self.image_extension}')
+        shutil.copyfile(f'{base_path}/example3.{self.image_extension}',
+                        f'{self.image_path}/example3.{self.image_extension}')
+
+        self.client.delete('/image')
+
+        total_images = get_total_images()
+
+        self.assertEqual(total_images, 0)
 
 
 if __name__ == "__main__":

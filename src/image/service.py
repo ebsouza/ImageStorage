@@ -4,9 +4,8 @@ from functools import singledispatch
 import aiofiles
 
 from src.config import load_config
-from src.image.utils import encode_image, is_image_file
 from src.image.error import ImageNotFound
-
+from src.image.utils import encode_image, is_image_file
 
 PATH_TO_IMAGE = load_config()['storage']
 IMAGE_EXTENSION = load_config()['file_extension']
@@ -79,12 +78,12 @@ async def _(image_id: None):
 
 @get_encoded_image.register
 async def _(image_id: str):
-    return [image_id], [await encode_image(image_id)]
+    return [image_id], [ await encode_image(image_id)]
 
 
 def get_total_images():
     _, _, files = next(os.walk(PATH_TO_IMAGE))
-    
+
     files = [file for file in files if is_image_file(file)]
 
     return len(files)

@@ -1,7 +1,6 @@
 import os
 from functools import lru_cache
 
-
 ALLOWED_EXTENSIONS = ['jpg', 'png', 'jpeg']
 
 

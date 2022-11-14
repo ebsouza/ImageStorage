@@ -1,10 +1,11 @@
 from fastapi import APIRouter, HTTPException
 from starlette.responses import JSONResponse
 
-from src.image.service import get_encoded_image, create_image, remove_image, get_total_images, get_total_size
-from src.image.utils import decode_image
+from src.image.error import ImageDecodeError, ImageNotFound
 from src.image.schemas import ImageGet
-from src.image.error import ImageNotFound, ImageDecodeError
+from src.image.service import (create_image, get_encoded_image,
+                               get_total_images, get_total_size, remove_image)
+from src.image.utils import decode_image
 
 router = APIRouter()
 
@@ -12,7 +13,7 @@ router = APIRouter()
 @router.get('/image')
 @router.get('/image/{image_id}')
 async def get_image_view(image_id: str = None):
-    
+
     try:
         image_ids, encoded_images = await get_encoded_image(image_id)
     except ImageNotFound:
@@ -32,7 +33,7 @@ async def create_image_view(image: ImageGet):
 
     await create_image(image.id, image_64_decoded)
 
-    return JSONResponse(content= {'data': image.id},  status_code=201)
+    return JSONResponse(content={'data': image.id}, status_code=201)
 
 
 @router.delete('/image')
@@ -43,7 +44,7 @@ def remove_image_view(image_id: str = None):
     except ImageNotFound:
         raise HTTPException(status_code=404, detail="Image not found")
 
-    return JSONResponse(content= {'data': image_ids},  status_code=200)
+    return JSONResponse(content={'data': image_ids}, status_code=200)
 
 
 @router.get('/info')
@@ -52,5 +53,5 @@ def sys_info_view():
 
     data['total_images'] = get_total_images()
     data['total_size'] = get_total_size()
-    
-    return JSONResponse(content=data,  status_code=200)
+
+    return JSONResponse(content=data, status_code=200)

@@ -2,8 +2,8 @@ import os
 
 from fastapi import FastAPI
 
-from src.image.router import router as image_router
 from src.config import ALLOWED_EXTENSIONS
+from src.image.router import router as image_router
 
 
 def create_app():

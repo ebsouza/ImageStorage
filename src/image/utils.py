@@ -1,11 +1,11 @@
 import base64
 import binascii
 
-from PIL import Image
 import aiofiles
+from PIL import Image
 
-from src.image.error import ImageNotFound, ImageDecodeError
 from src.config import load_config
+from src.image.error import ImageDecodeError, ImageNotFound
 
 PATH_TO_IMAGE = load_config()['storage']
 IMAGE_EXTENSION = load_config()['file_extension']
@@ -43,7 +43,6 @@ async def encode_image(image_id):
 
     except FileNotFoundError:
         raise ImageNotFound
-    
 
 
 def decode_image(image_encoded):

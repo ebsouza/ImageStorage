@@ -2,4 +2,5 @@ fastapi
 uvicorn
 Pillow
 requests
+httpx
 aiofiles

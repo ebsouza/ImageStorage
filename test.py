@@ -107,15 +107,16 @@ class ApiStorageTestCase(unittest.TestCase):
         image_id = 'example2'
         base_path = 'test-assets'
 
-        shutil.copyfile(f'{base_path}/{image_id}.{self.image_extension}',
-                        f'{self.image_path}/{image_id}.{self.image_extension}')
+        shutil.copyfile(
+            f'{base_path}/{image_id}.{self.image_extension}',
+            f'{self.image_path}/{image_id}.{self.image_extension}')
 
         response = self.client.delete('/image/' + image_id)
         self.assertEqual(response.status_code, 200)
 
     def test_remove_all_images(self):
         """ /image (DELETE) """
-        
+
         base_path = 'test-assets'
 
         shutil.copyfile(f'{base_path}/example1.{self.image_extension}',

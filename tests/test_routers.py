@@ -1,8 +1,10 @@
 import os
 import shutil
 
+import pytest
+
 from src.image.service import get_total_images
-from tests.utils import create_image_encode
+from tests.utils import create_image_encode, create_N_images, remove_all_images, create_image
 
 
 class TestRouters:
@@ -16,32 +18,27 @@ class TestRouters:
         assert data['total_size'] >= 0
         assert data['total_images'] >= 0
 
-    def test_get_image(self, client, image_path, image_extension):
+    def test_get_image(self, setup, client, image_path):
         """ /image/<image_id> (GET) """
-        base_path = 'test-assets'
 
-        shutil.copyfile(f'{base_path}/example1.{image_extension}',
-                        f'{image_path}/example1.{image_extension}')
+        image_id = 'test'
+        create_image(image_path, image_id)
 
-        response = client.get('/image/example1')
+        response = client.get(f'/image/{image_id}')
         data = response.json()
 
         assert response.status_code == 200
         assert len(data) == 1
-        assert data[0]['id'] == 'example1'
+        assert data[0]['id'] == image_id
         assert isinstance(data[0]['image_data'], str)
 
-        os.remove(f'{image_path}/example1.{image_extension}')
+        remove_all_images(image_path)
 
-    def test_get_image_all(self, client, image_path, image_extension):
+    def test_get_image_all(self, setup, client, image_path):
         """ /image (GET) """
-        base_path = 'test-assets'
 
-        NUMBER_OF_IMAGES = 2
-
-        for index in range(1, NUMBER_OF_IMAGES + 1):
-            shutil.copyfile(f'{base_path}/example{index}.{image_extension}',
-                        f'{image_path}/example{index}.{image_extension}')
+        NUMBER_OF_IMAGES = 3
+        create_N_images(image_path, NUMBER_OF_IMAGES)
 
         response = client.get('/image')
         data = response.json()
@@ -51,57 +48,47 @@ class TestRouters:
         assert 'id' in data[0]
         assert 'image_data' in data[0]
 
-        for index in range(1, NUMBER_OF_IMAGES + 1):
-            os.remove(f'{image_path}/example{index}.{image_extension}')
+        remove_all_images(image_path)
 
-    def test_create_image(self, client, image_path, image_extension):
+    def test_create_image(self, setup, client, image_path, image_payload):
         """ /image (POST) """
-        
-        image_id = 'example1'
-        image_path_ = f"test-assets/{image_id}.{image_extension}"
-        absolute_path = os.path.abspath(image_path_)
 
-        json_file = dict()
-        json_file['id'] = image_id
-        json_file['image_data'] = create_image_encode(absolute_path)
-
-        response = client.post('/image', json=json_file)
+        response = client.post('/image', json=image_payload)
 
         assert response.status_code == 201
 
-        os.remove(f'{image_path}/{image_id}.{image_extension}')
+        remove_all_images(image_path)
 
-    def test_send_invalid_image_data(self, client):
+    def test_send_invalid_image_data(self, setup, client):
         """ /image (POST) """
         json_file = {'id': 'any_ID', 'image_data': '123456'}
         response = client.post('/image', json=json_file)
 
         assert response.status_code == 400
 
-    def test_remove_image(self, client, image_path, image_extension):
+    def test_remove_image(self, setup, client, image_path):
         """ /image/<image_id> (DELETE) """
         image_id = 'example2'
-        base_path = 'test-assets'
 
-        shutil.copyfile(
-            f'{base_path}/{image_id}.{image_extension}',
-            f'{image_path}/{image_id}.{image_extension}')
+        create_image(image_path, image_id)
 
         response = client.delete(f'/image/{image_id}')
+
+        assert get_total_images() == 0
         assert response.status_code == 200
 
-    def test_remove_all_images(self, client, image_path, image_extension):
+        remove_all_images(image_path)
+
+    def test_remove_all_images(self, setup, client, image_path):
         """ /image (DELETE) """
 
-        base_path = 'test-assets'
         NUMBER_OF_IMAGES = 3
-
-        for index in range(1, NUMBER_OF_IMAGES + 1):
-            shutil.copyfile(f'{base_path}/example{index}.{image_extension}',
-                        f'{image_path}/example{index}.{image_extension}')
+        create_N_images(image_path, NUMBER_OF_IMAGES)
 
         response = client.delete('/image')
         image_ids = response.json()['data']
 
         assert get_total_images() == 0
         assert len(image_ids) == NUMBER_OF_IMAGES
+
+        remove_all_images(image_path)

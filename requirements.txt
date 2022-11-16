@@ -6,3 +6,4 @@ httpx
 aiofiles
 pytest
 pytest-cov
+pytest-env

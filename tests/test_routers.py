@@ -1,32 +1,8 @@
 import os
 import shutil
 
-from fastapi.testclient import TestClient
-import pytest
-
-from src.app import create_app
-from src.config import load_config
 from src.image.service import get_total_images
-
-
-def is_gitignore(file):
-    return "gitignore" in file
-
-
-@pytest.fixture
-def client():
-    app = create_app()
-    return TestClient(app)
-
-
-@pytest.fixture
-def image_path():
-    return load_config()['storage']
-
-
-@pytest.fixture
-def image_extension():
-    return load_config()['file_extension']
+from tests.utils import create_image_encode
 
 
 class TestRouters:
@@ -80,8 +56,7 @@ class TestRouters:
 
     def test_create_image(self, client, image_path, image_extension):
         """ /image (POST) """
-        from src.image.utils import create_image_encode
-
+        
         image_id = 'example1'
         image_path_ = f"test-assets/{image_id}.{image_extension}"
         absolute_path = os.path.abspath(image_path_)

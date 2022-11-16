@@ -2,27 +2,12 @@ import base64
 import binascii
 
 import aiofiles
-from PIL import Image
 
 from src.config import load_config
 from src.image.error import ImageDecodeError, ImageNotFound
 
 PATH_TO_IMAGE = load_config()['storage']
 IMAGE_EXTENSION = load_config()['file_extension']
-
-
-def create_dummy_image(image_path, extension=".jpg"):
-    img = Image.new('RGB', (300, 150), color='red')
-    file_name = image_path + extension
-    img.save(file_name)
-
-
-def create_image_encode(image_path):
-    with open(image_path, 'rb') as image:
-        image_read = image.read()
-        image_64_encode = base64.encodebytes(image_read)
-
-    return image_64_encode.decode("utf-8")
 
 
 def is_image_file(path):

@@ -1,9 +1,9 @@
-import os 
 import base64
+import os
 from io import BytesIO
 
-from fastapi.testclient import TestClient
 import pytest
+from fastapi.testclient import TestClient
 
 from src.app import create_app
 from src.config import load_config

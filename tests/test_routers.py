@@ -1,10 +1,5 @@
-import os
-import shutil
-
-import pytest
-
 from src.image.service import get_total_images
-from tests.utils import create_image_encode, create_N_images, remove_all_images, create_image
+from tests.utils import create_image, create_N_images, remove_all_images
 
 
 class TestRouters:

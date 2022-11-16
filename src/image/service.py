@@ -81,7 +81,6 @@ async def _(image_id: str):
     return [image_id], [ await encode_image(image_id)]
 
 
-#def get_total_images(folder=PATH_TO_IMAGE):
 def get_total_images():
     _, _, files = next(os.walk(PATH_TO_IMAGE))
 

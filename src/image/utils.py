@@ -14,7 +14,7 @@ IMAGE_EXTENSION = load_config()['file_extension']
 def is_image_file(path_to_image):
     if not re.search(f'.{IMAGE_EXTENSION}', path_to_image):
         return False
-    
+
     return True
 
 
@@ -36,11 +36,8 @@ async def encode_image(image_id):
         raise ImageNotFound
 
 
-def decode_image(image_encoded):
+def decode_image(encoded_image):
     try:
-        image_64_encode = image_encoded
-        image_64_encode = image_64_encode.encode("utf-8")
-
-        return base64.decodebytes(image_64_encode)
+        return base64.decodebytes(encoded_image.encode('utf-8'))
     except binascii.Error:
         raise ImageDecodeError

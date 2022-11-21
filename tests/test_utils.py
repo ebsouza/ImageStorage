@@ -1,7 +1,8 @@
 import pytest
 
-from src.image.utils import is_image_file, get_path_to_image, encode_image, PATH_TO_IMAGE, IMAGE_EXTENSION
 from src.image.error import ImageDecodeError, ImageNotFound
+from src.image.utils import (IMAGE_EXTENSION, PATH_TO_IMAGE, decode_image,
+                             encode_image, get_path_to_image, is_image_file)
 from tests.utils import create_image, remove_all_images
 
 
@@ -41,4 +42,12 @@ class TestUtils:
     async def test_encode_image_not_found(self):
         with pytest.raises(ImageNotFound):
             await encode_image('any_image_id')
-        
+
+    def test_decode_image(self, image_encoded):
+        image_decoded = decode_image(image_encoded)
+
+        assert isinstance(image_decoded, bytes)
+
+    def test_decode_image_(self):
+        with pytest.raises(ImageDecodeError):
+            decode_image('any_string')

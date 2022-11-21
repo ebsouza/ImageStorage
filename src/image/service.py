@@ -3,18 +3,15 @@ from functools import singledispatch
 
 import aiofiles
 
-from src.config import load_config
 from src.image.error import ImageNotFound
-from src.image.utils import encode_image, is_image_file
-
-PATH_TO_IMAGE = load_config()['storage']
-IMAGE_EXTENSION = load_config()['file_extension']
+from src.image.utils import (PATH_TO_IMAGE, encode_image, get_path_to_image,
+                             is_image_file)
 
 
 async def create_image(image_id, image_64_decoded):
-    image_path = f'{PATH_TO_IMAGE}/{image_id}.{IMAGE_EXTENSION}'
+    path_to_image = get_path_to_image(image_id)
 
-    async with aiofiles.open(image_path, 'wb') as image_created:
+    async with aiofiles.open(path_to_image, 'wb') as image_created:
         await image_created.write(image_64_decoded)
 
 
@@ -25,9 +22,9 @@ def remove_image():
 
 @remove_image.register
 def _(image_id: str):
-    image = f"{PATH_TO_IMAGE}/{image_id}.{IMAGE_EXTENSION}"
+    path_to_image = get_path_to_image(image_id)
     try:
-        os.remove(image)
+        os.remove(path_to_image)
     except FileNotFoundError:
         raise ImageNotFound
 
@@ -42,14 +39,14 @@ def _(image_id: None):
         if not is_image_file(filename):
             continue
 
-        file_path = os.path.join(PATH_TO_IMAGE, filename)
+        path_to_image = os.path.join(PATH_TO_IMAGE, filename)
 
         try:
-            if os.path.isfile(file_path):
-                os.remove(file_path)
+            if os.path.isfile(path_to_image):
+                os.remove(path_to_image)
                 image_ids.append(filename)
         except Exception as e:
-            print('Failed to delete %s. Reason: %s' % (file_path, e))
+            print('Failed to delete %s. Reason: %s' % (path_to_image, e))
 
     return image_ids
 

@@ -1,5 +1,6 @@
 import base64
 import binascii
+import re
 
 import aiofiles
 
@@ -10,12 +11,19 @@ PATH_TO_IMAGE = load_config()['storage']
 IMAGE_EXTENSION = load_config()['file_extension']
 
 
-def is_image_file(path):
-    return path.rsplit(".")[0] != ''
+def is_image_file(path_to_image):
+    if not re.search(f'.{IMAGE_EXTENSION}', path_to_image):
+        return False
+    
+    return True
+
+
+def get_path_to_image(image_id):
+    return f'{PATH_TO_IMAGE}/{image_id}.{IMAGE_EXTENSION}'
 
 
 async def encode_image(image_id):
-    image_path = f'{PATH_TO_IMAGE}/{image_id}.{IMAGE_EXTENSION}'
+    image_path = get_path_to_image(image_id)
     try:
         async with aiofiles.open(image_path, 'rb') as image:
             image_read = await image.read()

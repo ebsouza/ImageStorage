@@ -8,4 +8,4 @@ COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN python -m pytest tests/
+RUN python -m pytest --cov=src tests/

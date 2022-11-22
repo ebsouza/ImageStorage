@@ -43,6 +43,11 @@ def image_encoded():
 
 
 @pytest.fixture
+def image_decoded(image_encoded):
+    return base64.decodebytes(image_encoded.encode('utf-8'))
+
+
+@pytest.fixture
 def image_payload(image_encoded):
     json_file = dict()
     json_file['id'] = 'test'

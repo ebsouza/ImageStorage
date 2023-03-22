@@ -58,6 +58,15 @@ class TestRouters:
 
         test_utils.remove_all_images(image_path)
 
+    def test_create_image_invalid_encoded_image(self, client, image_path, image_payload_invalid):
+        """ /image (POST) """
+
+        response = client.post('/image', json=image_payload_invalid)
+
+        assert response.status_code == 400
+
+        test_utils.remove_all_images(image_path)
+
     def test_remove_image(self, client, image_repository):
         """ /image/<image_id> (DELETE) """
 

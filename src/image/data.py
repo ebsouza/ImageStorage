@@ -1,10 +1,11 @@
 import base64
+import binascii
 import os
 from typing import List
 
 import aiofiles
 
-from src.image.error import ImageNotFound
+from src.image.error import ImageDecodeError, ImageNotFound
 from src.image.utils import is_image_file
 
 
@@ -17,9 +18,14 @@ class ImageFileSystem:
     async def create(self, image_id: str, image_data: str):
         path_to_image = self._get_path_to_image(image_id)
 
-        async with aiofiles.open(path_to_image, 'wb') as image_created:
-            image_64_decoded = base64.decodebytes(image_data.encode('utf-8'))
-            await image_created.write(image_64_decoded)
+        try:
+            async with aiofiles.open(path_to_image, 'wb') as image_created:
+                image_64_decoded = base64.decodebytes(
+                    image_data.encode('utf-8'))
+                await image_created.write(image_64_decoded)
+        except binascii.Error:
+            os.remove(path_to_image)
+            raise ImageDecodeError
 
     def remove(self, image_id: str) -> str:
         try:

@@ -17,12 +17,9 @@ def create_image(image_folder, image_id):
     img.save(image_path)
 
 
-def create_N_images(image_folder, n=3):
-    extension = os.getenv('FILE_EXTENSION')
-    for counter in range(n):
-        img = Image.new('RGB', (300, 150), color='red')
-        image_path = f'{image_folder}/image_{counter}.{extension}'
-        img.save(image_path)
+def create_N_images(image_folder, N=3):
+    for counter in range(N):
+        create_image(image_folder, f'image_{counter}')
 
 
 def remove_all_images(image_folder):
@@ -37,3 +34,12 @@ def create_image_encode(image_path):
         image_64_encode = base64.encodebytes(image_read)
 
     return image_64_encode.decode("utf-8")
+
+
+def count_images(image_path):
+    counter = 0
+
+    for _ in os.listdir(image_path):
+        counter += 1
+
+    return counter

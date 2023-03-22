@@ -1,15 +1,12 @@
-from pydantic import BaseModel
+from typing import List
+
+from src.image.model import Image
 
 
-class Image(BaseModel):
-    id: str
-    image_data: str
+def get_image_view(images: List[Image]):
+    data = list()
+    for image in images:
+        content = {'id': image.id, 'image_data': image.image_data}
+        data.append(content)
 
-    @classmethod
-    def create_list(cls, ids: list, encoded_images: list):
-        data = list()
-        for id, encoded_image in zip(ids, encoded_images):
-            content = {'id': id, 'image_data': encoded_image}
-            data.append(content)
-
-        return data
+    return data

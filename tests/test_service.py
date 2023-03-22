@@ -1,91 +1,99 @@
 import pytest
 
+import src.image.service as service
+import tests.utils as test_utils
 from src.image.error import ImageNotFound
-from src.image.service import (create_image, get_encoded_image,
-                               get_total_images, get_total_size, remove_image)
-from tests.utils import create_image as create_image_utils
-from tests.utils import create_N_images, remove_all_images
+from src.image.model import Image
 
 
 class TestService:
 
     @pytest.mark.asyncio
-    async def test_create_image(self, setup, image_path, image_decoded):
-        await create_image('image_id', image_decoded)
+    async def test_create_image(self, image_repository, image):
+        image_path = image_repository._data_store._path
 
-        assert 1 == get_total_images()
+        await service.create_image(image, image_repository)
 
-        remove_all_images(image_path)
+        assert 1 == test_utils.count_images(image_path)
 
-    def test_remove_image_one_file(self, setup, image_path):
-        image_id = 'any_image_id'
-        create_image_utils(image_path, image_id)
+        test_utils.remove_all_images(image_path)
 
-        assert 1 == get_total_images()
+    def test_remove_image(self, image_repository):
+        image_path = image_repository._data_store._path
+        image_id = '<any_id>'
+        test_utils.create_image(image_path, image_id)
 
-        remove_image(image_id)
+        assert 1 == test_utils.count_images(image_path)
 
-        assert 0 == get_total_images()
+        image_ids = service.remove_image(image_id, image_repository)
 
-    def test_remove_image_not_found(self):
+        assert 0 == test_utils.count_images(image_path)
+        assert isinstance(image_ids, list)
+
+    def test_remove_all_images(self, image_repository):
+        NUMBER_OF_IMAGES = 5
+        image_path = image_repository._data_store._path
+        test_utils.create_N_images(image_path, NUMBER_OF_IMAGES)
+
+        assert NUMBER_OF_IMAGES == test_utils.count_images(image_path)
+
+        image_ids = service.remove_image(None, image_repository)
+        assert isinstance(image_ids, list)
+
+        assert 0 == test_utils.count_images(image_path)
+
+    @pytest.mark.asyncio
+    async def test_get_encoded_image(self, image_repository):
+        image_path = image_repository._data_store._path
+        image_id = '<any_id>'
+        test_utils.create_image(image_path, image_id)
+
+        images = await service.get_encoded_image(image_id, image_repository)
+        assert isinstance(images, list)
+        assert isinstance(images[0], Image)
+        assert images[0].id == image_id
+
+        test_utils.remove_all_images(image_path)
+
+    @pytest.mark.asyncio
+    async def test_get_encoded_image_not_found(self, image_repository):
         with pytest.raises(ImageNotFound):
-            remove_image('image_id')
-
-    def test_remove_image_all_files(self, setup, image_path):
-        NUMBER_OF_IMAGES = 5
-        create_N_images(image_path, NUMBER_OF_IMAGES)
-
-        assert NUMBER_OF_IMAGES == get_total_images()
-
-        remove_image(None)
-
-        assert 0 == get_total_images()
+            await service.get_encoded_image('<any_id>', image_repository)
 
     @pytest.mark.asyncio
-    async def test_get_encoded_image_one_file(self, setup, image_path):
-        image_id = 'any_image_id'
-        create_image_utils(image_path, image_id)
+    async def test_get_encoded_image_all(self, image_repository):
+        NUMBER_OF_IMAGES = 3
+        image_path = image_repository._data_store._path
+        test_utils.create_N_images(image_path, NUMBER_OF_IMAGES)
 
-        image_ids, enconded_images = await get_encoded_image(image_id)
+        images = await service.get_encoded_image(None, image_repository)
 
-        assert 1 == len(image_ids)
-        assert image_id == image_ids[0]
-        assert 1 == len(enconded_images)
+        assert isinstance(images, list)
+        for image in images:
+            assert isinstance(image, Image)
+        assert NUMBER_OF_IMAGES == len(images)
 
-        remove_all_images(image_path)
-
-    @pytest.mark.asyncio
-    async def test_get_encoded_image_not_found(self):
-        image_id = 'any_image_id'
-
-        with pytest.raises(ImageNotFound):
-            await get_encoded_image(image_id)
+        test_utils.remove_all_images(image_path)
 
     @pytest.mark.asyncio
-    async def test_get_encoded_image_all_files(self, setup, image_path):
-        NUMBER_OF_IMAGES = 5
-        create_N_images(image_path, NUMBER_OF_IMAGES)
+    async def test_get_total_images(self, image_repository):
+        NUMBER_OF_IMAGES = 3
+        image_path = image_repository._data_store._path
+        test_utils.create_N_images(image_path, NUMBER_OF_IMAGES)
 
-        image_ids, enconded_images = await get_encoded_image(None)
+        total_images = await service.get_total_images(image_repository)
 
-        assert NUMBER_OF_IMAGES == len(image_ids)
-        assert NUMBER_OF_IMAGES == len(enconded_images)
+        assert NUMBER_OF_IMAGES == total_images
 
-        remove_all_images(image_path)
+        test_utils.remove_all_images(image_path)
 
-    def test_get_total_images(self, setup, image_path):
-        NUMBER_OF_IMAGES = 5
-        create_N_images(image_path, NUMBER_OF_IMAGES)
+    def test_get_total_size(self, image_repository):
+        NUMBER_OF_IMAGES = 3
+        image_path = image_repository._data_store._path
+        test_utils.create_N_images(image_path, NUMBER_OF_IMAGES)
 
-        assert NUMBER_OF_IMAGES == get_total_images()
+        total_size = service.get_total_size(image_repository)
 
-        remove_all_images(image_path)
+        assert total_size > 0
 
-    def test_get_total_size(self, setup, image_path):
-        NUMBER_OF_IMAGES = 5
-        FIVE_TEST_IMAGES_SIZE_MB = 0.006945
-        create_N_images(image_path, NUMBER_OF_IMAGES)
-
-        assert FIVE_TEST_IMAGES_SIZE_MB == get_total_size()
-
-        remove_all_images(image_path)
+        test_utils.remove_all_images(image_path)

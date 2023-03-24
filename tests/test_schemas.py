@@ -13,9 +13,8 @@ class TestSchemas:
 
         data = build_schema(image_id, [image], any_offset)
 
-        assert 1 == len(data)
-        assert isinstance(data[0]['id'], str)
-        assert isinstance(data[0]['image_data'], str)
+        assert isinstance(data['id'], str)
+        assert isinstance(data['image_data'], str)
 
     def test_build_schema_without_image_id(self, image_collection_factory):
         offset = 0
@@ -34,9 +33,8 @@ class TestSchemas:
     def test_get_image(self, image):
         data = get_image([image])
 
-        assert 1 == len(data)
-        assert isinstance(data[0]['id'], str)
-        assert isinstance(data[0]['image_data'], str)
+        assert isinstance(data['id'], str)
+        assert isinstance(data['image_data'], str)
 
     def test_get_image_collection(self, image_collection_factory):
         offset = 0

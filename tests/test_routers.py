@@ -25,10 +25,9 @@ class TestRouters:
         data = response.json()
 
         assert 200 == response.status_code
-        assert 1 == len(data)
 
-        assert data[0]['id'] == image_id
-        assert isinstance(data[0]['image_data'], str)
+        assert data['id'] == image_id
+        assert isinstance(data['image_data'], str)
 
         test_utils.remove_all_images(image_path)
 

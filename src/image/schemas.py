@@ -16,11 +16,8 @@ def build_schema(image_id: str, images: List[Image], offset: int):
 
 
 def get_image(images: List[Image]):
-    data = list()
-
     image = images[0]
-    content = {'id': image.id, 'image_data': image.image_data}
-    data.append(content)
+    data = {'id': image.id, 'image_data': image.image_data}
 
     return data
 

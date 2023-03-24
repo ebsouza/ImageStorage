@@ -55,12 +55,8 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 ```javascript
 // return
 { 
-    [
-        {
-            "id": <image_id>,
-            "image_data": <image.base64>
-        }
-    ]
+  "id": <image_id>,
+  "image_data": <image.base64>
 }
 ```
 
@@ -73,15 +69,18 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 ```javascript
 // return
 { 
-    [
-        {
-            "id": <image_id>,
-            "image_data": <image.base64>
-        },
-        {
-            "id": <image_id>,
-            "image_data": <image.base64>
-        },
+  "kind": "Collection",
+  "next": "<host_url>/image?offset=10",
+  "previous": "<host_url>/image?offset=5",
+  "data": [
+              {
+                  "id": <image_id>,
+                  "image_data": <image.base64>
+              },
+              {
+                  "id": <image_id>,
+                  "image_data": <image.base64>
+              }
     ]
 }
 ```

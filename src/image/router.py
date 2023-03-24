@@ -15,15 +15,15 @@ def build_router(image_repository: ImageRepository):
 
     @router.get('/image')
     @router.get('/image/{image_id}')
-    async def get_image_view(image_id: str = None):
+    async def get_image_view(image_id: str = None, offset: int = 0):
 
         try:
-            data = await get_encoded_image(image_id, image_repository)
-            images = schema.get_image_view(data)
+            images = await get_encoded_image(image_id, image_repository)
+            data = schema.build_schema(image_id, images, offset)
         except ImageNotFound:
             raise HTTPException(status_code=404, detail="Image not found")
 
-        return JSONResponse(content=images, status_code=200)
+        return JSONResponse(content=data, status_code=200)
 
     @router.post('/image')
     async def create_image_view(image: Image):

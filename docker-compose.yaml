@@ -6,6 +6,8 @@ services:
     environment:
       - APP_SETTINGS=production
       - FILE_EXTENSION=jpg
+      - EXPOSED_URL=localhost:5000
+      - COLLECTION_LIMIT=5
     ports:
       - 5000:5000
     command: "uvicorn wsgi:app --host 0.0.0.0 --port 5000  --reload"

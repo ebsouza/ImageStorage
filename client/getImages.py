@@ -12,7 +12,7 @@ def recover_images():
     resource = f"{URL}image"
     response = requests.get(url=resource)
 
-    for data in response.json():
+    for data in response.json()['data']:
         image_64_encode = data['image_data']
         image_64_encode = image_64_encode.encode("utf-8")
         image_64_decode = base64.decodebytes(image_64_encode)

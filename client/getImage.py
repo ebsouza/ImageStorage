@@ -12,7 +12,7 @@ def get_image(image_id):
     resource = f"{URL}image/{image_id}"
     response = requests.get(url=resource)
 
-    data = response.json()[0]
+    data = response.json()
 
     image_64_encode = data['image_data']
     image_64_encode = image_64_encode.encode("utf-8")

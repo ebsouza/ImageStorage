@@ -62,6 +62,15 @@ def image_payload(image_encoded):
 
 
 @pytest.fixture
+def image_payload_invalid():
+    json_file = dict()
+    json_file['id'] = 'test'
+    json_file['image_data'] = 'invalid_image_data_<123456>'
+
+    return json_file
+
+
+@pytest.fixture
 def image_file_system(image_path, image_extension):
     if not os.path.exists(image_path):
         os.mkdir(image_path)
@@ -79,3 +88,16 @@ def image_repository(image_file_system):
 @pytest.fixture
 def image(image_encoded):
     return Image(id='any_data', image_data=image_encoded)
+
+
+@pytest.fixture
+def image_collection_factory(image_encoded):
+
+    def factory(length):
+        images = list()
+        for index in range(length):
+            image = Image(id=f'image_{index}', image_data=image_encoded)
+            images.append(image)
+        return images
+
+    return factory

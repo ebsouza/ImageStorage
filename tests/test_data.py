@@ -1,7 +1,7 @@
 import pytest
 
 import tests.utils as test_utils
-from src.image.error import ImageNotFound
+from src.image.error import ImageNotFound, ImageDecodeError
 
 
 class TestImageFileSystem:
@@ -15,6 +15,17 @@ class TestImageFileSystem:
             await image_file_system.create(f'image_{index}', image_encoded)
 
         assert NUMBER_OF_IMAGES == test_utils.count_images(image_path)
+
+        test_utils.remove_all_images(image_path)
+
+    @pytest.mark.asyncio
+    async def test_create_image_invalid_data(self, image_file_system, image_encoded):
+        image_path = image_file_system._path
+
+        with pytest.raises(ImageDecodeError):
+            await image_file_system.create('image', 'invalid_image_data_<123456>')
+
+        assert 0 == test_utils.count_images(image_path)
 
         test_utils.remove_all_images(image_path)
 

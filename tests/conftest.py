@@ -88,3 +88,16 @@ def image_repository(image_file_system):
 @pytest.fixture
 def image(image_encoded):
     return Image(id='any_data', image_data=image_encoded)
+
+
+@pytest.fixture
+def image_collection_factory(image_encoded):
+
+    def factory(length):
+        images = list()
+        for index in range(length):
+            image = Image(id=f'image_{index}', image_data=image_encoded)
+            images.append(image)
+        return images
+
+    return factory

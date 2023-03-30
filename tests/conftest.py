@@ -10,7 +10,7 @@ from src.config import load_config
 from src.image.data import ImageFileSystem
 from src.image.model import Image
 from src.image.repository import ImageRepository
-from src.image.router import build_router
+from src.image.router import build_images_router, build_storage_router
 from tests.utils import create_dummy_image, remove_all_images
 
 
@@ -22,7 +22,8 @@ def client(image_repository):
     def about():
         return 'Image Storage API. By: EBSouza'
 
-    app.include_router(build_router(image_repository))
+    app.include_router(build_images_router(image_repository), prefix='/v1/images')
+    app.include_router(build_storage_router(image_repository), prefix='/v1/storage')
 
     return TestClient(app)
 

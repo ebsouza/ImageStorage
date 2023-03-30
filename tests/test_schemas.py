@@ -85,7 +85,7 @@ class TestSchemas:
         host = os.getenv('EXPOSED_URL')
         link = build_link(offset)
 
-        assert f'{host}/image?offset={offset}' == link
+        assert f'{host}/v1/images?offset={offset}' == link
 
     def test_build_link_null_case(self):
         link = build_link(INVALID_OFFSET)

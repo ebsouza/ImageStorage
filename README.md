@@ -34,7 +34,7 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 #### Create an image
 
 ```http
-  POST /image
+  POST /v1/images
 ```
 
 ```javascript
@@ -49,7 +49,7 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 #### Get one image
 
 ```http
-  GET /image/<image_id>
+  GET /v1/images/<image_id>
 ```
 
 ```javascript
@@ -63,7 +63,7 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 #### Get all images
 
 ```http
-  GET /image
+  GET /v1/images
 ```
 
 ```javascript
@@ -88,7 +88,7 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 #### Delete one image
 
 ```http
-  DELETE /image/<image_id>
+  DELETE /v1/images/<image_id>
 ```
 
 ```javascript
@@ -101,7 +101,7 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 #### Delete all images
 
 ```http
-  DELETE /image
+  DELETE /v1/images
 ```
 
 ```javascript
@@ -111,10 +111,10 @@ See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/cli
 }
 ```
 
-#### Recover system info
+#### Storage info
 
 ```http
-  GET /info
+  GET /v1/storage/info
 ```
 
 ```javascript

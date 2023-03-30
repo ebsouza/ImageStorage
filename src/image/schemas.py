@@ -64,4 +64,4 @@ def build_link(offset: int):
         return None
 
     HOST = os.getenv('EXPOSED_URL')
-    return f'{HOST}/image?offset={offset}'
+    return f'{HOST}/v1/images?offset={offset}'

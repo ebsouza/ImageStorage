@@ -1,5 +1,5 @@
 import requests
-from constants import URL
+from client.settings import URL
 
 """
 http://<URL>/image/<image_id> (DELETE)

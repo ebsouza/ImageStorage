@@ -1,7 +1,7 @@
 import base64
 
 import requests
-from constants import IMAGE_EXTENSION, URL
+from client.settings import IMAGE_EXTENSION, URL
 
 """
 http://<URL>/image/<image_id> (GET)

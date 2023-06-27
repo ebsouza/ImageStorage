@@ -1,13 +1,13 @@
 import requests
-from client.settings import URL
+from settings import URL
 
 """
-http://<URL>/image/<image_id> (DELETE)
+http://<URL>/v1/images/<image_id> (DELETE)
 """
 
 
 def remove_image(image_id):
-    url = f"{URL}image/{image_id}"
+    url = f"{URL}v1/images/{image_id}"
     response = requests.delete(url=url)
     print(
         f"URL: {url} - Response: {response.content} - Status Code: {response}")

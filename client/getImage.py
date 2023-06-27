@@ -1,15 +1,15 @@
 import base64
 
 import requests
-from client.settings import IMAGE_EXTENSION, URL
+from settings import IMAGE_EXTENSION, URL
 
 """
-http://<URL>/image/<image_id> (GET)
+http://<URL>/v1/images/<image_id> (GET)
 """
 
 
 def get_image(image_id):
-    resource = f"{URL}image/{image_id}"
+    resource = f"{URL}v1/images/{image_id}"
     response = requests.get(url=resource)
 
     data = response.json()

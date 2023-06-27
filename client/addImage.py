@@ -1,15 +1,15 @@
 import base64
 
 import requests
-from client.settings import IMAGE_EXTENSION, URL
+from settings import IMAGE_EXTENSION, URL
 
 """
-http://<URL>/image (POST)
+http://<URL>/v1/images (POST)
 """
 
 
 def add_image(image_id):
-    url = URL + 'image'
+    url = URL + 'v1/images'
     json_file = dict()
     json_file['id'] = image_id
 

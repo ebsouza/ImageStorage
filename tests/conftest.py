@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from src.config import load_config
+from src.errors import setup_exception_handlers
 from src.image.data import ImageFileSystem
 from src.image.model import Image
 from src.image.repository import ImageRepository
@@ -24,6 +25,8 @@ def client(image_repository):
 
     app.include_router(build_images_router(image_repository), prefix='/v1/images')
     app.include_router(build_storage_router(image_repository), prefix='/v1/storage')
+
+    setup_exception_handlers(app)
 
     return TestClient(app)
 

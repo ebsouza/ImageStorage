@@ -4,6 +4,7 @@ from fastapi import FastAPI
 
 from src.bootstrap import repository
 from src.config import ALLOWED_EXTENSIONS
+from src.errors import setup_exception_handlers
 from src.image.router import build_images_router, build_storage_router
 
 
@@ -18,6 +19,8 @@ def create_app():
 
     app.include_router(build_images_router(repository), prefix='/v1/images')
     app.include_router(build_storage_router(repository), prefix='/v1/storage')
+
+    setup_exception_handlers(app)
 
     return app
 

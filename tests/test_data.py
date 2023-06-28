@@ -1,7 +1,7 @@
 import pytest
 
 import tests.utils as test_utils
-from src.image.error import ImageNotFound, ImageDecodeError
+from src.image.errors import ImageNotFound, ImageDecodeError
 
 
 class TestImageFileSystem:

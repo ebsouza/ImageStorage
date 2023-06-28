@@ -2,7 +2,7 @@ import pytest
 
 import src.image.service as service
 import tests.utils as test_utils
-from src.image.error import ImageNotFound
+from src.image.errors import ImageNotFound
 from src.image.model import Image
 
 

@@ -5,7 +5,7 @@ from typing import List
 
 import aiofiles
 
-from src.image.error import ImageDecodeError, ImageNotFound
+from src.image.errors import ImageDecodeError, ImageNotFound
 from src.image.utils import is_image_file
 
 

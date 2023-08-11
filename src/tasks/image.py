@@ -10,10 +10,3 @@ def create_image_task(image_id: str, image_b64: str):
 @celery.task(queue=QUEQUE)
 def remove_image_task(image_id: str):
     repository_fs.remove(image_id)
-
-
-@celery.task(queue=QUEQUE)
-def update_image_task(image_id: str):
-    print(image_id)
-
-# https://github.com/GregaVrbancic/fastapi-celery/tree/master

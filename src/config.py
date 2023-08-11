@@ -1,10 +1,9 @@
 import os
-from functools import lru_cache
+#from functools import lru_cache
 
 ALLOWED_EXTENSIONS = ('jpg', 'png', 'jpeg')
 
 
-@lru_cache(maxsize=1)
 def load_config():
     config = dict()
 
@@ -13,10 +12,11 @@ def load_config():
     app_settings = os.getenv('APP_SETTINGS')
 
     if app_settings == 'production':
-        config['storage'] = 'Storage'
+        config['storage'] = os.getenv('STORAGE_FS')
+        config['storage_web'] = os.getenv('STORAGE_WEB')
     elif app_settings == 'development':
-        config['storage'] = 'dev-storage'
+        config['storage'] = 'Storage-dev'
     elif app_settings == 'testing':
-        config['storage'] = 'test-storage'
+        config['storage'] = 'Storage-test'
 
     return config

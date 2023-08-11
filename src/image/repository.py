@@ -1,4 +1,5 @@
 from typing import List
+from uuid import UUID
 
 from src.image.data import ImageFileSystem
 from src.image.model import Image
@@ -14,10 +15,10 @@ class ImageRepository:
         self._client.add(image)
 
     def get(self, image_id: str) -> Image:
-        return self._client.get(image_id)
+        return self._client.get(UUID(image_id))
     
     def remove(self, image_id: str):
-        self._client.remove(image_id)
+        self._client.remove(UUID(image_id))
 
     def get_many(self, offset: int = 0, limit: int = 10) -> List[Image]:
         return list(self._client.get_many(offset, limit))

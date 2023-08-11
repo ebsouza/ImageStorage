@@ -38,7 +38,6 @@ class ImageFileSystem:
 
     def create(self, image_id: str, image_data: str):
         path_to_image = self._get_path_to_image(image_id)
-
         try:
             with open(path_to_image, 'wb') as image_created:
                 image_64_decoded = base64.decodebytes(

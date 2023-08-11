@@ -4,6 +4,10 @@ pillow
 requests
 httpx 
 aiofiles
+celery
+flower
+eventlet
+alembic
 pytest
 pytest-env
 pytest-asyncio

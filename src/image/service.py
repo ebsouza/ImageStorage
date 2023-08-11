@@ -3,42 +3,28 @@ from typing import List
 from src.image.model import Image
 from src.image.repository import ImageRepository
 from src.logging import get_logging
+from src.tasks.image import create_image_task, remove_image_task, update_image_task
 
 logger = get_logging(__name__)
 
 
-async def create_image(image: Image, repository: ImageRepository):
-    await repository.add(image)
-    logger.info(f"Image '{image.id}' was sucessfully created")
+def create_image(image_b64: str, repository: ImageRepository):
+    image = Image.create('xpto')
+    repository.add(image)
+    create_image_task.delay(image.id, image_b64)
+    logger.info(f"Image '{image.id}' was created")
+
+    return image.id
 
 
-def remove_image(image_id: str, repository: ImageRepository) -> List[str]:
-    if image_id is None:
-        image_ids = repository.remove_all()
-        logger.info("All images were sucessfully removed")
-    else:
-        repository.remove(image_id)
-        logger.info(f"Image '{image_id}' was sucessfully removed")
-        image_ids = [image_id]
-    return image_ids
+def remove_image(image_id: str, repository: ImageRepository):
+    repository.remove(image_id)
+    remove_image_task.delay(image_id)
 
 
-async def get_encoded_image(image_id: str,
-                            repository: ImageRepository) -> List[Image]:
-    if image_id is None:
-        images = await repository.get_many()
-    else:
-        image = await repository.get(image_id)
-        images = [image]
-
-    return images
+def get_image(image_id: str, repository: ImageRepository) -> Image:
+    return repository.get(image_id)
 
 
-async def get_total_images(repository: ImageRepository) -> int:
-    images = await repository.get_many()
-
-    return len(images)
-
-
-def get_total_size(repository: ImageRepository) -> float:
-    return repository.get_total_size()
+def get_image_many(repository: ImageRepository, offset: int = 0, limit: int = 10) -> List[Image]:
+    return repository.get_many(offset, limit)

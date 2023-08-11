@@ -8,9 +8,9 @@ from fastapi.testclient import TestClient
 
 from src.config import load_config
 from src.errors import setup_exception_handlers
-from src.image.data import ImageFileSystem
+from image.data import ImageFileSystem
 from src.image.model import Image
-from src.image.repository import ImageRepository
+from image.repository import ImageRepository
 from src.image.router import build_images_router, build_storage_router
 from tests.utils import create_dummy_image, remove_all_images
 

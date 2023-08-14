@@ -8,10 +8,10 @@ from fastapi.testclient import TestClient
 
 from src.config import load_config
 from src.errors import setup_exception_handlers
-from image.data import ImageFileSystem
+from src.image.data import ImageFileSystem
 from src.image.model import Image
-from image.repository import ImageRepository
-from src.image.router import build_images_router, build_storage_router
+from src.image.repository import ImageRepositoryFS
+from src.image.router import build_images_router
 from tests.utils import create_dummy_image, remove_all_images
 
 
@@ -24,7 +24,6 @@ def client(image_repository):
         return 'Image Storage API. By: EBSouza'
 
     app.include_router(build_images_router(image_repository), prefix='/v1/images')
-    app.include_router(build_storage_router(image_repository), prefix='/v1/storage')
 
     setup_exception_handlers(app)
 
@@ -86,7 +85,7 @@ def image_file_system(image_path, image_extension):
 
 @pytest.fixture
 def image_repository(image_file_system):
-    return ImageRepository(image_file_system)
+    return ImageRepositoryFS(image_file_system)
 
 
 @pytest.fixture

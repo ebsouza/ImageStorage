@@ -5,7 +5,6 @@ services:
     build: .
     environment:
       - APP_SETTINGS=production
-      - FILE_EXTENSION=jpg
       - EXPOSED_URL=localhost:5000
       - COLLECTION_LIMIT=5
       - POSTGRES_USER=user123
@@ -13,6 +12,9 @@ services:
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_DB=db
+      - STORAGE_FS=Storage
+      - STORAGE_WEB=http://localhost:8080
+      - FILE_EXTENSION=jpg
     ports:
       - 5000:5000
     command: "uvicorn wsgi:app --host 0.0.0.0 --port 5000  --reload"
@@ -23,7 +25,6 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-#    depends_on:
 #      postgres:
 #        condition: service_healthy
 #  postgres:
@@ -45,6 +46,11 @@ services:
   worker:
     build: .
     #env_file: .env
+    environment:
+      - APP_SETTINGS=production
+      - STORAGE_FS=Storage
+      - STORAGE_WEB=http://localhost:8080
+      - FILE_EXTENSION=jpg
     entrypoint: celery
     command: -A src.celery_app worker --concurrency=500 --pool=eventlet --loglevel=info
     depends_on:

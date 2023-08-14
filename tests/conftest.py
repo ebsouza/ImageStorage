@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 
 from src.config import load_config
 from src.errors import setup_exception_handlers
-from src.image.data import ImageFileSystem, ImageBinary
+from src.image.data import ImageBinary, ImageFileSystem
 from src.image.model import Image
 from src.image.repository import ImageRepositoryFS
 from src.image.router import build_images_router
@@ -23,7 +23,8 @@ def client(image_repository):
     def about():
         return 'Image Storage API. By: EBSouza'
 
-    app.include_router(build_images_router(image_repository), prefix='/v1/images')
+    app.include_router(build_images_router(image_repository),
+                       prefix='/v1/images')
 
     setup_exception_handlers(app)
 
@@ -100,6 +101,19 @@ def image_binary_collection_factory(image_encoded):
         images = list()
         for index in range(length):
             image = ImageBinary(id=f'image_{index}', image_data=image_encoded)
+            images.append(image)
+        return images
+
+    return factory
+
+
+@pytest.fixture
+def image_collection_factory():
+
+    def factory(length):
+        images = list()
+        for index in range(length):
+            image = Image(id=f'image_{index}', path='<any_path>')
             images.append(image)
         return images
 

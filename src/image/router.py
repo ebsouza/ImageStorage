@@ -1,13 +1,13 @@
 from fastapi import APIRouter
 from starlette.responses import JSONResponse
 
-from src.image.repository import ImageRepository
+from src.image.repository import ImageRepositoryDB
 from src.image.schemas import ImageIn, ImageManyOut, ImageOut
 from src.image.service import (create_image, get_image, get_image_many,
                                remove_image)
 
 
-def build_images_router(image_repository: ImageRepository):
+def build_images_router(image_repository: ImageRepositoryDB):
 
     router = APIRouter()
 

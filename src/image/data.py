@@ -2,6 +2,7 @@ import base64
 import binascii
 import os
 from typing import List
+from dataclasses import dataclass
 
 from sqlalchemy.orm import Session
 
@@ -120,3 +121,9 @@ class ImageFileSystem:
 
     def _get_path_to_image(self, image_id: str):
         return f'{self._path}/{image_id}.{self._image_extension}'
+
+
+@dataclass
+class ImageBinary:
+    id: str
+    image_data: str

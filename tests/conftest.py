@@ -8,7 +8,7 @@ from fastapi.testclient import TestClient
 
 from src.config import load_config
 from src.errors import setup_exception_handlers
-from src.image.data import ImageFileSystem
+from src.image.data import ImageFileSystem, ImageBinary
 from src.image.model import Image
 from src.image.repository import ImageRepositoryFS
 from src.image.router import build_images_router
@@ -89,17 +89,17 @@ def image_repository(image_file_system):
 
 
 @pytest.fixture
-def image(image_encoded):
-    return Image(id='any_data', image_data=image_encoded)
+def image_binary(image_encoded):
+    return ImageBinary(id='any_data', image_data=image_encoded)
 
 
 @pytest.fixture
-def image_collection_factory(image_encoded):
+def image_binary_collection_factory(image_encoded):
 
     def factory(length):
         images = list()
         for index in range(length):
-            image = Image(id=f'image_{index}', image_data=image_encoded)
+            image = ImageBinary(id=f'image_{index}', image_data=image_encoded)
             images.append(image)
         return images
 

@@ -1,8 +1,4 @@
-import os
-
-import pytest
-
-import tests.utils as test_utils
+from tests.utils import clean_repository_db
 
 
 class TestRouters:
@@ -34,16 +30,19 @@ class TestRouters:
         assert isinstance(data['previous'], str)
         assert LIMIT == len(data['data'])
 
-    @pytest.mark.skip
-    def test_get_image_traversal_all_images(self, client, image_repository):
-        """ /images (GET) """
+    def test_get_image_traversal_all_images(self, client, image_repository_db,
+                                            image_collection_factory):
+        clean_repository_db(image_repository_db)
 
-        COLLECTION_LIMIT = int(os.getenv('COLLECTION_LIMIT'))
-        NUMBER_OF_IMAGES_TOTAL = 3 * COLLECTION_LIMIT
-        for number_of_images in range(NUMBER_OF_IMAGES_TOTAL):
-            image_path = image_repository._data_store._path
-            test_utils.create_N_images(image_path, number_of_images)
+        LIMIT = 3
+        NUMBER_OF_IMAGES_TOTAL = 3 * LIMIT
 
+        images = image_collection_factory(NUMBER_OF_IMAGES_TOTAL)
+
+        for image in images:
+            image_repository_db.add(image)
+
+        for _ in range(NUMBER_OF_IMAGES_TOTAL):
             ids = list()
             NEXT_URL = '/v1/images'
 
@@ -60,8 +59,8 @@ class TestRouters:
                 images_uri = data['next'].rsplit('/')[1:]
                 NEXT_URL = f"/{images_uri[0]}/{images_uri[1]}"
 
-            unique_ids = set(ids)
-            assert number_of_images == len(unique_ids)
+        unique_ids = set(ids)
+        assert NUMBER_OF_IMAGES_TOTAL == len(unique_ids)
 
     def test_create_image(self, client, image_payload):
         """ /images (POST) """

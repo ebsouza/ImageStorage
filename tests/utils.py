@@ -4,6 +4,8 @@ import os
 
 from PIL import Image
 
+from src.image.model import Image as ImageDB
+
 
 def create_dummy_image():
     img = Image.new('RGB', (300, 150), color='red')
@@ -43,3 +45,9 @@ def count_images(image_path):
         counter += 1
 
     return counter
+
+
+def clean_repository_db(repository):
+    images = repository._client.session.query(ImageDB).all()
+    for image in images:
+        repository.remove(str(image.id))

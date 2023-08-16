@@ -5,7 +5,7 @@ import pytest
 import src.image.service as service
 from src.image.errors import ImageNotFound
 from src.image.model import Image
-
+from tests.utils import clean_repository_db
 
 class TestService:
 
@@ -49,9 +49,8 @@ class TestService:
         assert LIMIT == len(images_recovered)
         assert isinstance(images_recovered[0], Image)
 
-    @pytest.mark.skip
     def test_get_image_many_no_images(self, image_repository_db):
-        # TODO: clear repository after every test case
+        clean_repository_db(image_repository_db)
         images_recovered = service.get_image_many(image_repository_db)
 
         assert 0 == len(images_recovered)

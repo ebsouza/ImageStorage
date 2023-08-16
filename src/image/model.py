@@ -15,7 +15,7 @@ class Image(Base):
     __tablename__ = "image"
 
     id: Mapped[UUID] = mapped_column(primary_key=True, default=uuid4)
-    path: Mapped[str] = mapped_column(String(30))
+    path: Mapped[str] = mapped_column(String)
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now())
 

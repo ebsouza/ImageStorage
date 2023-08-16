@@ -15,10 +15,12 @@ def load_config():
         config['storage'] = os.getenv('STORAGE_FS')
         config['storage_web'] = os.getenv('STORAGE_WEB')
         config['broker'] = 'amqp://guest:guest@rabbitmq:5672//'
+        config['database'] = "postgresql://user123:pass123@postgres:5432/db" 
     elif app_settings == 'development':
         config['storage'] = 'Storage-dev'
     elif app_settings == 'testing':
         config['storage'] = 'Storage-test'
         config['broker'] = 'memory://'
+        config['database'] = "sqlite:///database.db"
 
     return config

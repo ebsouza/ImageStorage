@@ -25,27 +25,26 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-#      postgres:
-#        condition: service_healthy
-#  postgres:
-#    image: postgres
-#    container_name: postgres
-#    environment:
-#      - POSTGRES_USER=user123
-#      - POSTGRES_PASSWORD=pass123
-#      - POSTGRES_DB=db
-#    ports:
-#      - "5432:5432"
-#    healthcheck:
-#      test: ["CMD-SHELL", "pg_isready"]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 5
-#    logging:
-#      driver: none
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=user123
+      - POSTGRES_PASSWORD=pass123
+      - POSTGRES_DB=db
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: none
   worker:
     build: .
-    #env_file: .env
     environment:
       - APP_SETTINGS=production
       - STORAGE_FS=Storage

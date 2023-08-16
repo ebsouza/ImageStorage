@@ -13,6 +13,6 @@ repository_fs = ImageRepositoryFS(fs)
 
 
 #engine = db.create_engine("sqlite:///database.db", echo=True, future=True)
-engine = db.create_engine("sqlite:///database.db", future=True)
+engine = db.create_engine(load_config().get('database'), future=True)
 client = ClientSQL(engine)
 repository = ImageRepositoryDB(client)

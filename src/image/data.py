@@ -1,17 +1,19 @@
 import base64
 import binascii
 import os
-from typing import List
 from dataclasses import dataclass
+from typing import List
 
 from sqlalchemy.orm import Session
 
+from src.errors import ImageNotFound
 from src.image.errors import ImageDecodeError, ImageNotFound
-from src.image.utils import is_image_file
 from src.image.model import Image
+from src.image.utils import is_image_file
 
 
 class ClientSQL:
+
     def __init__(self, engine):
         self.session = Session(engine)
 
@@ -20,10 +22,13 @@ class ClientSQL:
         self.session.commit()
 
     def get(self, image_id: str) -> Image:
-        return self.session.query(Image).filter_by(id = image_id).first()
-    
+        image = self.session.query(Image).filter_by(id=image_id).first()
+        if image is None:
+            raise ImageNotFound
+        return image
+
     def remove(self, image_id: str):
-        image = self.session.query(Image).filter_by(id = image_id).first()
+        image = self.get(image_id)
         self.session.delete(image)
         self.session.commit()
 

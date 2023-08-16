@@ -14,9 +14,11 @@ def load_config():
     if app_settings == 'production':
         config['storage'] = os.getenv('STORAGE_FS')
         config['storage_web'] = os.getenv('STORAGE_WEB')
+        config['broker'] = 'amqp://guest:guest@rabbitmq:5672//'
     elif app_settings == 'development':
         config['storage'] = 'Storage-dev'
     elif app_settings == 'testing':
         config['storage'] = 'Storage-test'
+        config['broker'] = 'memory://'
 
     return config

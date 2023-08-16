@@ -1,29 +1,31 @@
 import base64
 import os
+import uuid
 from io import BytesIO
 
 import pytest
+import sqlalchemy as db
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from src.config import load_config
 from src.errors import setup_exception_handlers
-from src.image.data import ImageBinary, ImageFileSystem
+from src.image.data import ClientSQL, ImageBinary, ImageFileSystem
 from src.image.model import Image
-from src.image.repository import ImageRepositoryFS
+from src.image.repository import ImageRepositoryDB, ImageRepositoryFS
 from src.image.router import build_images_router
 from tests.utils import create_dummy_image, remove_all_images
 
 
 @pytest.fixture
-def client(image_repository):
+def client(image_repository_db):
     app = FastAPI()
 
     @app.get('/')
     def about():
         return 'Image Storage API. By: EBSouza'
 
-    app.include_router(build_images_router(image_repository),
+    app.include_router(build_images_router(image_repository_db),
                        prefix='/v1/images')
 
     setup_exception_handlers(app)
@@ -59,8 +61,7 @@ def image_decoded(image_encoded):
 @pytest.fixture
 def image_payload(image_encoded):
     json_file = dict()
-    json_file['id'] = 'test'
-    json_file['image_data'] = image_encoded
+    json_file['data'] = image_encoded
 
     return json_file
 
@@ -68,8 +69,7 @@ def image_payload(image_encoded):
 @pytest.fixture
 def image_payload_invalid():
     json_file = dict()
-    json_file['id'] = 'test'
-    json_file['image_data'] = 'invalid_image_data_<123456>'
+    json_file['data'] = 'invalid_image_data_<123456>'
 
     return json_file
 
@@ -113,8 +113,24 @@ def image_collection_factory():
     def factory(length):
         images = list()
         for index in range(length):
-            image = Image(id=f'image_{index}', path='<any_path>')
+            image = Image(id=uuid.uuid4(), path='<any_path>')
             images.append(image)
         return images
 
     return factory
+
+
+@pytest.fixture
+def image():
+    return Image(id=uuid.uuid4(), path='<any_path>')
+
+
+@pytest.fixture
+def client_sql():
+    engine = db.create_engine("sqlite:///database.db", future=True)
+    return ClientSQL(engine)
+
+
+@pytest.fixture
+def image_repository_db(client_sql):
+    return ImageRepositoryDB(client_sql)

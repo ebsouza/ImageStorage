@@ -1,7 +1,6 @@
 import os
 
 from typing import List
-
 from src.image.model import Image
 from src.image.repository import ImageRepositoryDB
 from src.logging import get_logging

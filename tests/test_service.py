@@ -1,99 +1,69 @@
+import uuid
+
 import pytest
 
 import src.image.service as service
-import tests.utils as test_utils
 from src.image.errors import ImageNotFound
 from src.image.model import Image
 
 
 class TestService:
 
-    @pytest.mark.asyncio
-    async def test_create_image(self, image_repository, image):
-        image_path = image_repository._data_store._path
+    def test_create_image(self, image_repository_db):
+        image_created = service.create_image('image_b64_fake',
+                                             image_repository_db)
 
-        await service.create_image(image, image_repository)
+        image_recovered = image_repository_db.get(str(image_created.id))
+        assert image_recovered.id == image_created.id
 
-        assert 1 == test_utils.count_images(image_path)
+    def test_get_image(self, image_repository_db, image):
+        image_repository_db.add(image)
 
-        test_utils.remove_all_images(image_path)
+        image_recovered = service.get_image(str(image.id), image_repository_db)
 
-    def test_remove_image(self, image_repository):
-        image_path = image_repository._data_store._path
-        image_id = '<any_id>'
-        test_utils.create_image(image_path, image_id)
+        assert image_recovered.id == image.id
 
-        assert 1 == test_utils.count_images(image_path)
+        image_repository_db.remove(str(image.id))
 
-        image_ids = service.remove_image(image_id, image_repository)
-
-        assert 0 == test_utils.count_images(image_path)
-        assert isinstance(image_ids, list)
-
-    def test_remove_all_images(self, image_repository):
-        NUMBER_OF_IMAGES = 5
-        image_path = image_repository._data_store._path
-        test_utils.create_N_images(image_path, NUMBER_OF_IMAGES)
-
-        assert NUMBER_OF_IMAGES == test_utils.count_images(image_path)
-
-        image_ids = service.remove_image(None, image_repository)
-        assert isinstance(image_ids, list)
-
-        assert 0 == test_utils.count_images(image_path)
-
-    @pytest.mark.asyncio
-    async def test_get_encoded_image(self, image_repository):
-        image_path = image_repository._data_store._path
-        image_id = '<any_id>'
-        test_utils.create_image(image_path, image_id)
-
-        images = await service.get_encoded_image(image_id, image_repository)
-        assert isinstance(images, list)
-        assert isinstance(images[0], Image)
-        assert images[0].id == image_id
-
-        test_utils.remove_all_images(image_path)
-
-    @pytest.mark.asyncio
-    async def test_get_encoded_image_not_found(self, image_repository):
         with pytest.raises(ImageNotFound):
-            await service.get_encoded_image('<any_id>', image_repository)
+            image_repository_db.get(str(image.id))
 
-    @pytest.mark.asyncio
-    async def test_get_encoded_image_all(self, image_repository):
-        NUMBER_OF_IMAGES = 3
-        image_path = image_repository._data_store._path
-        test_utils.create_N_images(image_path, NUMBER_OF_IMAGES)
+    def test_get_image_no_image(self, image_repository_db, image):
+        any_id = uuid.uuid4()
 
-        images = await service.get_encoded_image(None, image_repository)
+        with pytest.raises(ImageNotFound):
+            image_repository_db.get(str(any_id))
 
-        assert isinstance(images, list)
+    def test_get_image_many(self, image_repository_db,
+                            image_collection_factory):
+        NUMBER_OF_IMAGES = 5
+        LIMIT = 3
+        images = image_collection_factory(NUMBER_OF_IMAGES)
+
         for image in images:
-            assert isinstance(image, Image)
-        assert NUMBER_OF_IMAGES == len(images)
+            image_repository_db.add(image)
 
-        test_utils.remove_all_images(image_path)
+        images_recovered = service.get_image_many(image_repository_db, 0,
+                                                  LIMIT)
 
-    @pytest.mark.asyncio
-    async def test_get_total_images(self, image_repository):
-        NUMBER_OF_IMAGES = 3
-        image_path = image_repository._data_store._path
-        test_utils.create_N_images(image_path, NUMBER_OF_IMAGES)
+        assert LIMIT == len(images_recovered)
+        assert isinstance(images_recovered[0], Image)
 
-        total_images = await service.get_total_images(image_repository)
+    @pytest.mark.skip
+    def test_get_image_many_no_images(self, image_repository_db):
+        # TODO: clear repository after every test case
+        images_recovered = service.get_image_many(image_repository_db)
 
-        assert NUMBER_OF_IMAGES == total_images
+        assert 0 == len(images_recovered)
 
-        test_utils.remove_all_images(image_path)
+    def test_remove_image(self, image_repository_db, image):
+        image_repository_db.add(image)
 
-    def test_get_total_size(self, image_repository):
-        NUMBER_OF_IMAGES = 3
-        image_path = image_repository._data_store._path
-        test_utils.create_N_images(image_path, NUMBER_OF_IMAGES)
+        service.remove_image(str(image.id), image_repository_db)
 
-        total_size = service.get_total_size(image_repository)
+        with pytest.raises(ImageNotFound):
+            image_repository_db.get(str(image.id))
 
-        assert total_size > 0
-
-        test_utils.remove_all_images(image_path)
+    def test_remove_image_no_image(self, image_repository_db, image):
+        with pytest.raises(ImageNotFound):
+            service.remove_image(str(image.id), image_repository_db)

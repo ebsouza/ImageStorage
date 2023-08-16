@@ -2,9 +2,10 @@ import os
 
 from celery import Celery
 from kombu import Queue, Exchange
+from src.config import load_config
 
 #Celery Setup
-celery = Celery('worker-celery', broker='amqp://guest:guest@rabbitmq:5672//')
+celery = Celery('worker-celery', broker=load_config().get('broker'))
 
 #Load config from a file
 celery.config_from_object('src.celeryconfig')

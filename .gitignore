@@ -1,4 +1,6 @@
 *.pyc
 .idea
 .coverage
+.db
 venv
+migrations/versions

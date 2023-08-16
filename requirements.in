@@ -8,6 +8,7 @@ celery
 flower
 eventlet
 alembic
+psycopg2-binary
 pytest
 pytest-env
 pytest-asyncio

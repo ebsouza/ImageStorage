@@ -5,7 +5,8 @@ import pytest
 import src.image.service as service
 from src.image.errors import ImageNotFound
 from src.image.model import Image
-from tests.utils import clean_repository_db
+from tests.utils import clean_repository_db, create_n_images_repository_db
+
 
 class TestService:
 
@@ -34,14 +35,9 @@ class TestService:
         with pytest.raises(ImageNotFound):
             image_repository_db.get(str(any_id))
 
-    def test_get_image_many(self, image_repository_db,
-                            image_collection_factory):
-        NUMBER_OF_IMAGES = 5
-        LIMIT = 3
-        images = image_collection_factory(NUMBER_OF_IMAGES)
-
-        for image in images:
-            image_repository_db.add(image)
+    def test_get_image_many(self, image_repository_db):
+        NUMBER_OF_IMAGES, LIMIT = 5, 3
+        create_n_images_repository_db(image_repository_db, NUMBER_OF_IMAGES)
 
         images_recovered = service.get_image_many(image_repository_db, 0,
                                                   LIMIT)

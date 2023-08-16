@@ -1,4 +1,4 @@
-from tests.utils import clean_repository_db
+from tests.utils import create_n_images_repository_db
 
 
 class TestRouters:
@@ -12,14 +12,10 @@ class TestRouters:
         assert data['id'] == str(image.id)
         assert isinstance(data['path'], str)
 
-    def test_get_image_many(self, client, image_repository_db,
-                            image_collection_factory):
+    def test_get_image_many(self, client, image_repository_db):
         NUMBER_OF_IMAGES = 5
         LIMIT = 3
-        images = image_collection_factory(NUMBER_OF_IMAGES)
-
-        for image in images:
-            image_repository_db.add(image)
+        create_n_images_repository_db(image_repository_db, NUMBER_OF_IMAGES)
 
         response = client.get(f'/v1/images?limit={LIMIT}')
         data = response.json()
@@ -30,17 +26,11 @@ class TestRouters:
         assert isinstance(data['previous'], str)
         assert LIMIT == len(data['data'])
 
-    def test_get_image_traversal_all_images(self, client, image_repository_db,
-                                            image_collection_factory):
-        clean_repository_db(image_repository_db)
-
+    def test_get_image_traversal_all_images(self, client, image_repository_db):
         LIMIT = 3
         NUMBER_OF_IMAGES_TOTAL = 3 * LIMIT
 
-        images = image_collection_factory(NUMBER_OF_IMAGES_TOTAL)
-
-        for image in images:
-            image_repository_db.add(image)
+        create_n_images_repository_db(image_repository_db, NUMBER_OF_IMAGES_TOTAL)
 
         for _ in range(NUMBER_OF_IMAGES_TOTAL):
             ids = list()

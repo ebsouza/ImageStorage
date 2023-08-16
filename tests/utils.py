@@ -1,6 +1,7 @@
 import base64
 import glob
 import os
+import uuid
 
 from PIL import Image
 
@@ -51,3 +52,11 @@ def clean_repository_db(repository):
     images = repository._client.session.query(ImageDB).all()
     for image in images:
         repository.remove(str(image.id))
+
+
+def create_n_images_repository_db(repository, n=5):
+    clean_repository_db(repository)
+
+    for _ in range(n):
+        image = ImageDB(id=uuid.uuid4(), path='<any_path>')
+        repository.add(image)

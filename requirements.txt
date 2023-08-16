@@ -199,6 +199,10 @@ dnspython==2.4.2 \
     --hash=sha256:57c6fbaaeaaf39c891292012060beb141791735dbb4004798328fc2c467402d8 \
     --hash=sha256:8dcfae8c7460a2f84b4072e26f1c9f4101ca20c071649cb7c34e8b6a93d58984
     # via eventlet
+dynaconf==3.2.1 \
+    --hash=sha256:00dbd7541ca0f99bcb207cfc8aee0ac8f7d6b32bbb372e5b2865f0cb829b06c3 \
+    --hash=sha256:a4af12524f1fc527c6c0cdd4bb38cf83992d5155ad516baa98d9d01b7a731d09
+    # via -r requirements.in
 eventlet==0.33.3 \
     --hash=sha256:722803e7eadff295347539da363d68ae155b8b26ae6a634474d0a920be73cfda \
     --hash=sha256:e43b9ae05ba4bb477a10307699c9aff7ff86121b2640f9184d29059f5a687df8

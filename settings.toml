@@ -1,0 +1,30 @@
+[default]
+
+# general
+app_settings = 'production'
+exposed_url = 'localhost:5000'
+file_extension = 'jpg'
+
+# database
+postgres_user = 'user123'
+postgres_password = 'pass123'
+postgres_host = 'postgres'
+postgres_port = '5432'
+postgres_db = 'db'
+
+# broker
+broker_user = 'guest'
+broker_password = 'guest'
+broker_host = 'rabbitmq'
+broker_port = '5672'
+broker_vhost = '/'
+
+# storage
+storage_fs = 'Storage'
+storage_web = 'http://localhost:8080'
+
+
+
+
+
+

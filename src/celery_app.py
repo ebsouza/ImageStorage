@@ -1,11 +1,12 @@
 import os
 
 from celery import Celery
-from kombu import Queue, Exchange
-from src.config import load_config
+from kombu import Exchange, Queue
+
+from src.config import get_rabbit_config
 
 #Celery Setup
-celery = Celery('worker-celery', broker=load_config().get('broker'))
+celery = Celery('worker-celery', broker=get_rabbit_config())
 
 #Load config from a file
 celery.config_from_object('src.celeryconfig')
@@ -27,7 +28,6 @@ for task in files:
                 Exchange(task, type="direct"),
                 routing_key=f"src.task.{task}",
                 queue_arguments={"x-max-priority": 255},
-            ),
-        )
+            ), )
 celery.conf.task_queues = queues
 celery.autodiscover_tasks(tasks)

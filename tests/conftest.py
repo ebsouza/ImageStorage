@@ -8,7 +8,7 @@ import sqlalchemy as db
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from src.config import load_config
+from src.config import settings
 from src.errors import setup_exception_handlers
 from src.image.data import ClientSQL, ImageBinary, ImageFileSystem
 from src.image.model import Image
@@ -35,12 +35,12 @@ def client(image_repository_db):
 
 @pytest.fixture
 def image_path():
-    return load_config()['storage']
+    return settings.STORAGE_FS
 
 
 @pytest.fixture
 def image_extension():
-    return load_config()['file_extension']
+    return settings.FILE_EXTENSION
 
 
 @pytest.fixture

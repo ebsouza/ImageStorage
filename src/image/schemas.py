@@ -1,8 +1,8 @@
-import os
 from typing import List
 
 from pydantic import BaseModel
 
+from src.config import settings
 from src.image.model import Image
 
 
@@ -69,5 +69,5 @@ class ImageManyOut:
         if offset == self.INVALID_OFFSET:
             return None
 
-        HOST = os.getenv('EXPOSED_URL')
+        HOST = settings.EXPOSED_URL
         return f'{HOST}/v1/images?offset={offset}&limit={limit}'

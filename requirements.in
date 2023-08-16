@@ -9,6 +9,7 @@ flower
 eventlet
 alembic
 psycopg2-binary
+dynaconf
 pytest
 pytest-env
 pytest-asyncio

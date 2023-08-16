@@ -1,18 +1,12 @@
-#import os
 import sqlalchemy as db
 
-from src.config import load_config
-from src.image.data import ImageFileSystem, ClientSQL
+from src.config import get_db_config, settings
+from src.image.data import ClientSQL, ImageFileSystem
 from src.image.repository import ImageRepositoryDB, ImageRepositoryFS
 
-PATH_TO_IMAGE = load_config().get('storage')
-IMAGE_EXTENSION = load_config().get('file_extension')
-
-fs = ImageFileSystem(PATH_TO_IMAGE, IMAGE_EXTENSION)
+fs = ImageFileSystem(settings.STORAGE_FS, settings.FILE_EXTENSION)
 repository_fs = ImageRepositoryFS(fs)
 
-
-#engine = db.create_engine("sqlite:///database.db", echo=True, future=True)
-engine = db.create_engine(load_config().get('database', "sqlite:///database.db"), future=True)
+engine = db.create_engine(get_db_config(), future=True)
 client = ClientSQL(engine)
 repository = ImageRepositoryDB(client)

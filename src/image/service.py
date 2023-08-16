@@ -1,6 +1,6 @@
-import os
-
 from typing import List
+
+from src.config import settings
 from src.image.model import Image
 from src.image.repository import ImageRepositoryDB
 from src.logging import get_logging
@@ -10,8 +10,7 @@ logger = get_logging(__name__)
 
 
 def create_image(image_b64: str, repository: ImageRepositoryDB) -> Image:
-    storage_path = os.getenv('STORAGE_WEB', 'localhost:8080')
-    image = Image.create(storage_path)
+    image = Image.create(settings.STORAGE_WEB)
     logger.info(f"Creating image(id={image.id!r})")
 
     repository.add(image)

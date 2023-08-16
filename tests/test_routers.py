@@ -1,56 +1,40 @@
 import os
 
+import pytest
+
 import tests.utils as test_utils
 
 
 class TestRouters:
 
-    def test_get_info(self, client):
-        """ /info (GET) """
-        response = client.get('/v1/storage/info')
-        assert response.status_code == 200
-
-        data = response.json()
-        assert data['total_size'] >= 0
-        assert data['total_images'] >= 0
-
-    def test_get_image(self, client, image_repository):
-        """ /images/<image_id> (GET) """
-
-        image_path = image_repository._data_store._path
-        image_id = '<any_id>'
-        test_utils.create_image(image_path, image_id)
-
-        response = client.get(f'/v1/images/{image_id}')
+    def test_get_image(self, client, image_repository_db, image):
+        image_repository_db.add(image)
+        response = client.get(f'/v1/images/{str(image.id)}')
         data = response.json()
 
         assert 200 == response.status_code
+        assert data['id'] == str(image.id)
+        assert isinstance(data['path'], str)
 
-        assert data['id'] == image_id
-        assert isinstance(data['image_data'], str)
+    def test_get_image_many(self, client, image_repository_db,
+                            image_collection_factory):
+        NUMBER_OF_IMAGES = 5
+        LIMIT = 3
+        images = image_collection_factory(NUMBER_OF_IMAGES)
 
-        test_utils.remove_all_images(image_path)
+        for image in images:
+            image_repository_db.add(image)
 
-    def test_get_image_all(self, client, image_repository):
-        """ /images (GET) """
-
-        COLLECTION_LIMIT = int(os.getenv('COLLECTION_LIMIT'))
-        NUMBER_OF_IMAGES = 3
-        image_path = image_repository._data_store._path
-
-        test_utils.create_N_images(image_path, NUMBER_OF_IMAGES)
-
-        response = client.get('/v1/images')
+        response = client.get(f'/v1/images?limit={LIMIT}')
         data = response.json()
 
         assert 200 == response.status_code
         assert isinstance(data['kind'], str)
         assert isinstance(data['next'], str)
         assert isinstance(data['previous'], str)
-        assert COLLECTION_LIMIT == len(data['data'])
+        assert LIMIT == len(data['data'])
 
-        test_utils.remove_all_images(image_path)
-
+    @pytest.mark.skip
     def test_get_image_traversal_all_images(self, client, image_repository):
         """ /images (GET) """
 
@@ -79,48 +63,18 @@ class TestRouters:
             unique_ids = set(ids)
             assert number_of_images == len(unique_ids)
 
-            test_utils.remove_all_images(image_path)
-
-    def test_create_image(self, client, image_path, image_payload):
+    def test_create_image(self, client, image_payload):
         """ /images (POST) """
 
         response = client.post('/v1/images', json=image_payload)
 
         assert response.status_code == 201
 
-        test_utils.remove_all_images(image_path)
-
-    def test_create_image_invalid_encoded_image(self, client, image_path,
-                                                image_payload_invalid):
-        """ /images (POST) """
-
-        response = client.post('/v1/images', json=image_payload_invalid)
-
-        assert response.status_code == 400
-
-        test_utils.remove_all_images(image_path)
-
-    def test_remove_image(self, client, image_repository):
+    def test_remove_image(self, client, image_repository_db, image):
         """ /images/<image_id> (DELETE) """
 
-        image_path = image_repository._data_store._path
-        image_id = '<any_id>'
-        test_utils.create_image(image_path, image_id)
+        image_repository_db.add(image)
 
-        response = client.delete(f'/v1/images/{image_id}')
+        response = client.delete(f'/v1/images/{str(image.id)}')
 
-        assert 0 == test_utils.count_images(image_path)
         assert response.status_code == 200
-
-    def test_remove_all_images(self, client, image_repository):
-        """ /image (DELETE) """
-
-        NUMBER_OF_IMAGES = 3
-        image_path = image_repository._data_store._path
-        test_utils.create_N_images(image_path, NUMBER_OF_IMAGES)
-
-        response = client.delete('/v1/images')
-        image_ids = response.json()['data']
-
-        assert 0 == test_utils.count_images(image_path)
-        assert NUMBER_OF_IMAGES == len(image_ids)

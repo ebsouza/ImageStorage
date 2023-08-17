@@ -127,7 +127,7 @@ def image():
 
 @pytest.fixture
 def client_sql():
-    engine = db.create_engine("sqlite:///database.db", future=True)
+    engine = db.create_engine("sqlite:///database-test.db", future=True)
     return ClientSQL(engine)
 
 

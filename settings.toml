@@ -23,6 +23,14 @@ broker_vhost = '/'
 storage_fs = 'Storage'
 storage_web = 'http://localhost:8080'
 
+# development (enviroment)
+storage_development = 'Storage-test'
+database_development = 'sqlite:///database-dev.db'
+
+# test (enviroment)
+storage_test = 'Storage-test'
+database_test = 'sqlite:///database-test.db'
+
 
 
 

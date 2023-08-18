@@ -14,9 +14,9 @@ def get_rabbit_config():
 
 def get_db_config():
     if settings.APP_SETTINGS == 'testing':
-        return "sqlite:///database-test.db"
+        return settings.DATABASE_TEST
     elif settings.APP_SETTINGS == 'development':
-        return "sqlite:///database-dev.db"
+        return settings.DATABASE_DEVELOPMENT
     return ("postgresql://"
             f"{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}@"
             f"{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/"

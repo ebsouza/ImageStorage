@@ -42,7 +42,6 @@ services:
       - ./:/app
     stdin_open: true
     tty: true
-
   rabbitmq:
     image: rabbitmq:3-management
     ports:
@@ -53,7 +52,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
   flower:
     container_name: flower
     build: .
@@ -66,3 +64,10 @@ services:
       - worker
     depends_on:
       - worker
+  nginx:
+      container_name: nginx
+      image: flashspys/nginx-static
+      volumes:
+        - ./Storage:/static
+      ports:
+          - 8080:80

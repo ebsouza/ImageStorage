@@ -4,6 +4,9 @@ Store images on ImageStorage server using HTTP requests.
 
 ![](readme/ImageStorage-arch.png)
 
+<center> Figure 1 - Image Storage architecture </center>
+
+---
 
 ## 1. Starting Image Storage
 
@@ -34,6 +37,7 @@ Run tests on api container.
 ```shell
 docker exec -it <api-container> bash -c "python -m pytest --cov=src/image tests/"
 ```
+---
 
 ## 2. API Reference
 

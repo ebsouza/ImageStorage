@@ -1,7 +1,7 @@
 from logging.config import fileConfig
 import os
 
-from sqlalchemy import create_engine
+from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
@@ -27,17 +27,22 @@ target_metadata = Base.metadata
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
-def get_url():
-    if os.getenv('APP_SETTINGS') == 'testing':
-        return "sqlite:///database.db"
-    
-    return "postgresql://%s:%s@%s:%s/%s" % (
-        os.getenv("POSTGRES_USER", "user123"),
-        os.getenv("POSTGRES_PASSWORD", "pass123"),
-        os.getenv("POSTGRES_HOST", "localhost"),
-        os.getenv("POSTGRES_PORT", "5433"),
-        os.getenv("DB_NAME", "db"),
-    )
+if os.getenv('APP_SETTINGS') == 'testing':
+    config.set_main_option("sqlalchemy.url", "sqlite:///database-test.db")
+    print('test')
+elif os.getenv('APP_SETTINGS') == 'development':
+    config.set_main_option("sqlalchemy.url", "sqlite:///database-dev.db")
+    print('dev')
+else:
+    config.set_main_option("sqlalchemy.url", 
+    "postgresql://%s:%s@%s:%s/%s" % (
+    os.getenv("POSTGRES_USER", "user123"),
+    os.getenv("POSTGRES_PASSWORD", "pass123"),
+    os.getenv("POSTGRES_HOST", "localhost"),
+    os.getenv("POSTGRES_PORT", "5432"),
+    os.getenv("DB_NAME", "db") ))
+    print('prd')
+
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
@@ -51,7 +56,7 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = get_url()
+    url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -70,7 +75,11 @@ def run_migrations_online() -> None:
     and associate a connection with the context.
 
     """
-    connectable = create_engine(get_url())
+    connectable = engine_from_config(
+        config.get_section(config.config_ini_section),
+        prefix="sqlalchemy.",
+        poolclass=pool.NullPool,
+    )
 
     with connectable.connect() as connection:
         context.configure(

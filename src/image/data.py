@@ -1,12 +1,39 @@
 import base64
 import binascii
 import os
+from dataclasses import dataclass
 from typing import List
 
-import aiofiles
+from sqlalchemy.orm import Session
 
+from src.errors import ImageNotFound
 from src.image.errors import ImageDecodeError, ImageNotFound
+from src.image.model import Image
 from src.image.utils import is_image_file
+
+
+class ClientSQL:
+
+    def __init__(self, engine):
+        self.session = Session(engine)
+
+    def add(self, image: Image):
+        self.session.add(image)
+        self.session.commit()
+
+    def get(self, image_id: str) -> Image:
+        image = self.session.query(Image).filter_by(id=image_id).first()
+        if image is None:
+            raise ImageNotFound
+        return image
+
+    def remove(self, image_id: str):
+        image = self.get(image_id)
+        self.session.delete(image)
+        self.session.commit()
+
+    def get_many(self, offset: int = 0, limit: int = 10) -> List[Image]:
+        return self.session.query(Image).offset(offset).limit(limit)
 
 
 class ImageFileSystem:
@@ -15,14 +42,13 @@ class ImageFileSystem:
         self._path = path
         self._image_extension = image_extension
 
-    async def create(self, image_id: str, image_data: str):
+    def create(self, image_id: str, image_data: str):
         path_to_image = self._get_path_to_image(image_id)
-
         try:
-            async with aiofiles.open(path_to_image, 'wb') as image_created:
+            with open(path_to_image, 'wb') as image_created:
                 image_64_decoded = base64.decodebytes(
                     image_data.encode('utf-8'))
-                await image_created.write(image_64_decoded)
+                image_created.write(image_64_decoded)
         except binascii.Error:
             os.remove(path_to_image)
             raise ImageDecodeError
@@ -44,12 +70,12 @@ class ImageFileSystem:
 
         return image_ids
 
-    async def get(self, image_id: str):
+    def get(self, image_id: str):
         path_to_image = self._get_path_to_image(image_id)
 
         try:
-            async with aiofiles.open(path_to_image, 'rb') as image:
-                image_read = await image.read()
+            with open(path_to_image, 'rb') as image:
+                image_read = image.read()
                 image_64_encode = base64.b64encode(image_read)
                 encoded_image = image_64_encode.decode("utf-8")
 
@@ -58,7 +84,7 @@ class ImageFileSystem:
         except FileNotFoundError:
             raise ImageNotFound
 
-    async def get_all(self, limit: int = 100):
+    def get_all(self, limit: int = 100):
         images = dict()
         for index, data in enumerate(self.images_data):
             if index == limit:
@@ -66,7 +92,7 @@ class ImageFileSystem:
 
             image_id = data['image_id']
 
-            images[image_id] = await self.get(image_id)
+            images[image_id] = self.get(image_id)
 
         return images
 
@@ -100,3 +126,9 @@ class ImageFileSystem:
 
     def _get_path_to_image(self, image_id: str):
         return f'{self._path}/{image_id}.{self._image_extension}'
+
+
+@dataclass
+class ImageBinary:
+    id: str
+    image_data: str

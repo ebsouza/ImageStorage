@@ -6,37 +6,34 @@ from src.image.errors import ImageNotFound, ImageDecodeError
 
 class TestImageFileSystem:
 
-    @pytest.mark.asyncio
-    async def test_create_image(self, image_file_system, image_encoded):
+    def test_create_image(self, image_file_system, image_encoded):
         image_path = image_file_system._path
 
         NUMBER_OF_IMAGES = 3
         for index in range(NUMBER_OF_IMAGES):
-            await image_file_system.create(f'image_{index}', image_encoded)
+            image_file_system.create(f'image_{index}', image_encoded)
 
         assert NUMBER_OF_IMAGES == test_utils.count_images(image_path)
 
         test_utils.remove_all_images(image_path)
 
-    @pytest.mark.asyncio
-    async def test_create_image_invalid_data(self, image_file_system, image_encoded):
+    def test_create_image_invalid_data(self, image_file_system, image_encoded):
         image_path = image_file_system._path
 
         with pytest.raises(ImageDecodeError):
-            await image_file_system.create('image', 'invalid_image_data_<123456>')
+            image_file_system.create('image', 'invalid_image_data_<123456>')
 
         assert 0 == test_utils.count_images(image_path)
 
         test_utils.remove_all_images(image_path)
 
-    @pytest.mark.asyncio
-    async def test_create_image_override(self, image_file_system,
+    def test_create_image_override(self, image_file_system,
                                          image_encoded):
         image_path = image_file_system._path
 
         NUMBER_OF_IMAGES = 3
         for _ in range(NUMBER_OF_IMAGES):
-            await image_file_system.create('image_id', image_encoded)
+            image_file_system.create('image_id', image_encoded)
 
         assert 1 == test_utils.count_images(image_path)
 
@@ -67,34 +64,31 @@ class TestImageFileSystem:
         assert 0 == test_utils.count_images(image_path)
         assert 3 == len(image_ids)
 
-    @pytest.mark.asyncio
-    async def test_get_image(self, image_file_system):
+    def test_get_image(self, image_file_system):
         image_path = image_file_system._path
         image_id = 'any_id'
 
         test_utils.create_image(image_path, image_id)
 
-        encoded_image = await image_file_system.get(image_id)
+        encoded_image = image_file_system.get(image_id)
 
         assert isinstance(encoded_image, str)
 
         test_utils.remove_all_images(image_path)
 
-    @pytest.mark.asyncio
-    async def test_get_image_not_found(self, image_file_system):
+    def test_get_image_not_found(self, image_file_system):
         assert 0 == test_utils.count_images(image_file_system._path)
 
         with pytest.raises(ImageNotFound):
-            await image_file_system.get('any_id')
+            image_file_system.get('any_id')
 
-    @pytest.mark.asyncio
-    async def test_get_image_all(self, image_file_system):
+    def test_get_image_all(self, image_file_system):
         NUMBER_OF_IMAGES = 3
         image_path = image_file_system._path
 
         test_utils.create_N_images(image_path, NUMBER_OF_IMAGES)
 
-        data = await image_file_system.get_all()
+        data = image_file_system.get_all()
 
         assert isinstance(data, dict)
         assert NUMBER_OF_IMAGES == len(data)

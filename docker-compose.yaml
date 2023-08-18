@@ -3,11 +3,6 @@ version: "3.7"
 services:
   api:
     build: .
-    environment:
-      - APP_SETTINGS=production
-      - FILE_EXTENSION=jpg
-      - EXPOSED_URL=localhost:5000
-      - COLLECTION_LIMIT=5
     ports:
       - 5000:5000
     command: "uvicorn wsgi:app --host 0.0.0.0 --port 5000  --reload"
@@ -15,3 +10,64 @@ services:
       - ./:/app
     stdin_open: true
     tty: true
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+  postgres:
+    image: postgres
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=user123
+      - POSTGRES_PASSWORD=pass123
+      - POSTGRES_DB=db
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    logging:
+      driver: none
+  worker:
+    build: .
+    entrypoint: celery
+    command: -A src.celery_app worker --concurrency=500 --pool=eventlet --loglevel=info
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    volumes:
+      - ./:/app
+    stdin_open: true
+    tty: true
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 30s
+      timeout: 10s
+      retries: 3
+  flower:
+    container_name: flower
+    build: .
+    command: celery -A src.celery_app --broker=amqp://guest:guest@rabbitmq:5672// flower --port=5555 --broker_api=http://guest:guest@rabbitmq:15672/api/ --persistent=True --db=./flower.db
+    ports:
+      - 5555:5555
+    volumes:
+      - ./:/app
+    links:
+      - worker
+    depends_on:
+      - worker
+  nginx:
+      container_name: nginx
+      image: flashspys/nginx-static
+      volumes:
+        - ./Storage:/static
+      ports:
+          - 8080:80

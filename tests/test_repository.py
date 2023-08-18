@@ -1,67 +1,62 @@
 import pytest
 
 import tests.utils as test_utils
+from src.image.data import ImageBinary
 from src.image.errors import ImageNotFound
-from src.image.model import Image
 
 
-class TestImageRepository:
+class TestImageRepositoryFS:
 
-    @pytest.mark.asyncio
-    async def test_add_image(self, image_repository, image):
+    def test_add_image(self, image_repository, image_binary):
         image_path = image_repository._data_store._path
 
-        await image_repository.add(image)
+        image_repository.add(image_binary)
 
         assert 1 == test_utils.count_images(image_path)
 
         test_utils.remove_all_images(image_path)
 
-    @pytest.mark.asyncio
-    async def test_get_image(self, image_repository):
+    def test_get_image(self, image_repository):
         image_path = image_repository._data_store._path
         image_id = '<any_id>'
         test_utils.create_image(image_path, image_id)
 
-        image = await image_repository.get(image_id)
+        image = image_repository.get(image_id)
 
-        assert isinstance(image, Image)
+        assert isinstance(image, ImageBinary)
         assert image_id == image.id
         assert 1 == test_utils.count_images(image_path)
 
         test_utils.remove_all_images(image_path)
 
-    @pytest.mark.asyncio
-    async def test_get_image_not_found(self, image_repository):
+    def test_get_image_not_found(self, image_repository):
         with pytest.raises(ImageNotFound):
-            await image_repository.get('<any_id>')
+            image_repository.get('<any_id>')
 
-    @pytest.mark.asyncio
-    async def test_get_image_many(self, image_repository):
+    def test_get_image_many(self, image_repository):
         NUMBER_OF_IMAGES = 5
         image_path = image_repository._data_store._path
         test_utils.create_N_images(image_path, NUMBER_OF_IMAGES)
 
-        images = await image_repository.get_many()
+        images = image_repository.get_many()
 
         for image in images:
-            assert isinstance(image, Image)
+            assert isinstance(image, ImageBinary)
 
         assert NUMBER_OF_IMAGES == len(images)
 
         test_utils.remove_all_images(image_path)
 
-    @pytest.mark.asyncio
-    async def test_get_image_many_limit(self, image_repository):
+    def test_get_image_many_limit(self, image_repository):
         NUMBER_OF_IMAGES = 5
         LIMIT_OF_IMAGES = 3
         image_path = image_repository._data_store._path
         test_utils.create_N_images(image_path, NUMBER_OF_IMAGES)
 
-        images = await image_repository.get_many(LIMIT_OF_IMAGES)
+        images = image_repository.get_many(LIMIT_OF_IMAGES)
 
         for image in images:
-            assert isinstance(image, Image)
+            assert isinstance(image, ImageBinary)
 
         assert isinstance(images, list)
         assert LIMIT_OF_IMAGES == len(images)

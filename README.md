@@ -1,127 +1,131 @@
 # Image Storage 
 
-Store images on remote machine using HTTP requests.
+Store images on ImageStorage server using HTTP requests.
 
-![](readme/ImageStorage_v2.gif)
+![](readme/ImageStorage-arch.png)
 
-(Icons made by Those Icons and catkuro from 'www.flaticon.com')
+<center> Figure 1 - Image Storage architecture </center>
 
+---
 
 ## 1. Starting Image Storage
+
+First of all install `alembic` on your local or virtual environment.
+
+Set properly all parameters on `settings.toml` and start containers.
 
 ```shell
 docker-compose up
 ```
 
-Checking everything is ok
+Invoke `alembic migration` tool to development or production environment.
 
 ```shell
-$ curl http://<host-ip>:5000/
+make run_migration_development
 ```
-
-'Image Storage API. By: EBSouza' should appear for you.
 
 ## 1.1 Testing
 
+Invoke `alembic migration` tool to test environment.
+
 ```shell
-docker exec -it <container-name> bash -c "python test.py"
+make run_migration_test
 ```
+
+Run tests on api container.
+
+```shell
+docker exec -it <api-container> bash -c "python -m pytest --cov=src/image tests/"
+```
+---
 
 ## 2. API Reference
 
-See also some [examples](https://github.com/ebsouza/ImageStorage/tree/master/client).
-
-#### Create an image
+### 2.1. Create image
 
 ```http
-  POST /v1/images
+POST /v1/images
+```
+
+```shell
+# Post
+data=$(base64 "image.jpg")
+echo '{"data": "'$data'"}' > payload.json
+curl -s -X POST http://localhost:5000/v1/images/ -d @payload.json -H 'Content-Type: application/json'
 ```
 
 ```javascript
-// payload
+// Return
 { 
     "id": <image_id>,
-    "image_data": <image.base64>
+    "path": <image_path>
 }
 ```
 
-
-#### Get one image
+### 2.2. Get one image
 
 ```http
-  GET /v1/images/<image_id>
+GET /v1/images/<image_id>
+```
+
+```shell
+# Get
+curl http://localhost:5000/v1/images/<image_id>
 ```
 
 ```javascript
-// return
+// Return
 { 
   "id": <image_id>,
-  "image_data": <image.base64>
+  "path": <image_path>
 }
 ```
 
-#### Get all images
+### 2.3. Get many images
 
 ```http
-  GET /v1/images
+GET /v1/images?offset=10&limit=10
+```
+
+```shell
+# Get
+curl http://localhost:5000/v1/images
 ```
 
 ```javascript
-// return
+// Return
 { 
   "kind": "Collection",
-  "next": "<host_url>/image?offset=10",
-  "previous": "<host_url>/image?offset=5",
+  "next": "<host_url>/images?offset=10&limit=5",
+  "previous": "<host_url>/images?offset=5&limit=5",
   "data": [
               {
                   "id": <image_id>,
-                  "image_data": <image.base64>
+                  "path": <image_path>
               },
               {
                   "id": <image_id>,
-                  "image_data": <image.base64>
+                  "path": <image_path>
               }
     ]
 }
 ```
 
-#### Delete one image
+### 3.3. Delete image
 
 ```http
-  DELETE /v1/images/<image_id>
+DELETE /v1/images/<image_id>
+```
+
+```shell
+# DELETE
+curl -s -X DELETE http://localhost:5000/v1/images/<image_id>
 ```
 
 ```javascript
-// return
+// Return
 { 
-    "data": ['image_id']
-}
-```
-
-#### Delete all images
-
-```http
-  DELETE /v1/images
-```
-
-```javascript
-// return
-{ 
-    "data": ['image_id1', 'image_id2', 'image_id3']
-}
-```
-
-#### Storage info
-
-```http
-  GET /v1/storage/info
-```
-
-```javascript
-// return
-{ 
-    "total_images": 23,
-    "total_size": 72.7
+    "image_id": '<image_id>'
 }
 ```
 

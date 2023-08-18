@@ -1,27 +1,47 @@
 from typing import List
+from uuid import UUID
 
-from src.image.data import ImageFileSystem
+from src.image.data import ImageFileSystem, ImageBinary
 from src.image.model import Image
+from src.image.data import ClientSQL
 
 
-class ImageRepository:
+class ImageRepositoryDB:
+
+    def __init__(self, client: ClientSQL):
+        self._client = client
+
+    def add(self, image: Image):
+        self._client.add(image)
+
+    def get(self, image_id: str) -> Image:
+        return self._client.get(UUID(image_id))
+    
+    def remove(self, image_id: str):
+        self._client.remove(UUID(image_id))
+
+    def get_many(self, offset: int = 0, limit: int = 10) -> List[Image]:
+        return list(self._client.get_many(offset, limit))
+
+
+class ImageRepositoryFS:
 
     def __init__(self, data_store: ImageFileSystem):
         self._data_store = data_store
 
-    async def add(self, image: Image):
-        await self._data_store.create(image.id, image.image_data)
+    def add(self, image: ImageBinary):
+        self._data_store.create(image.id, image.image_data)
 
-    async def get(self, image_id: str) -> Image:
+    def get(self, image_id: str) -> ImageBinary:
 
-        image_data = await self._data_store.get(image_id)
-        image = Image(id=image_id, image_data=image_data)
+        image_data = self._data_store.get(image_id)
+        image = ImageBinary(id=image_id, image_data=image_data)
         return image
 
-    async def get_many(self, limit: int = 100) -> List[Image]:
-        image_dict = await self._data_store.get_all(limit)
+    def get_many(self, limit: int = 100) -> List[ImageBinary]:
+        image_dict = self._data_store.get_all(limit)
         images = [
-            Image(id=image_id, image_data=image_data)
+            ImageBinary(id=image_id, image_data=image_data)
             for image_id, image_data in image_dict.items()
         ]
         return images

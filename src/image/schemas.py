@@ -1,67 +1,73 @@
-import os
 from typing import List
 
+from pydantic import BaseModel
+
+from src.config import settings
 from src.image.model import Image
 
-INVALID_OFFSET = -1
 
-    
-def build_schema(image_id: str, images: List[Image], offset: int):
-    if image_id is None:
-        data = get_image_collection(images, offset)
-    else:
-        data = get_image(images)
-
-    return data
+class ImageIn(BaseModel):
+    data: str
 
 
-def get_image(images: List[Image]):
-    image = images[0]
-    data = {'id': image.id, 'image_data': image.image_data}
+class ImageOut(BaseModel):
+    id: str
+    path: str
 
-    return data
+    @classmethod
+    def from_model_to_schema(cls, image: Image):
+        if image is None:
+            return {}
 
-
-def get_image_collection(images: List[Image], offset: int = 0):
-    LIMIT = int(os.getenv('COLLECTION_LIMIT'))
-    next_offset = get_next_offset(offset, LIMIT, len(images))
-    previous_offset = get_previous_offset(offset, LIMIT)
-
-    data = {
-        "kind": "Collection",
-        "next": build_link(next_offset),
-        "previous": build_link(previous_offset),
-        "data": list()
-    }
-
-    for image in images[offset:offset + LIMIT]:
-        content = {'id': image.id, 'image_data': image.image_data}
-        data["data"].append(content)
-
-    return data
+        return cls(id=str(image.id), path=image.path).model_dump()
 
 
-def get_next_offset(offset: int, limit: int, total_images: int):
-    next_offset = offset + limit
+class ImageManyOut:
 
-    if next_offset >= total_images:
-        next_offset = INVALID_OFFSET
+    INVALID_OFFSET = -1
 
-    return next_offset
+    def __init__(self, images: List[Image], offset: int, limit: int):
+        self.data = self._get_image_collection(images, offset, limit)
 
+    def _get_image_collection(self,
+                              images: List[Image],
+                              offset: int = 0,
+                              limit: int = 10):
+        next_offset = self._get_next_offset(offset, limit, len(images))
+        previous_offset = self._get_previous_offset(offset, limit)
 
-def get_previous_offset(offset: int, limit: int):
-    previous_offset = offset - limit
+        data = {
+            "kind": "Collection",
+            "next": self._build_link(next_offset, limit),
+            "previous": self._build_link(previous_offset, limit),
+            "data": list()
+        }
 
-    if previous_offset <= 0:
-        previous_offset = 0
+        for image in images:
+            content = {'id': str(image.id), 'path': image.path}
+            data["data"].append(content)
 
-    return previous_offset
+        return data
 
+    def _get_next_offset(self, offset: int, limit: int, total_images: int):
+        next_offset = offset + limit
 
-def build_link(offset: int):
-    if offset == INVALID_OFFSET:
-        return None
+        if total_images < limit:
+            next_offset = self.INVALID_OFFSET
 
-    HOST = os.getenv('EXPOSED_URL')
-    return f'{HOST}/v1/images?offset={offset}'
+        return next_offset
+
+    def _get_previous_offset(self, offset: int, limit: int):
+        previous_offset = offset - limit
+
+        if previous_offset <= 0:
+            previous_offset = 0
+
+        return previous_offset
+
+    def _build_link(self, offset: int, limit: int):
+        if offset == self.INVALID_OFFSET:
+            return None
+
+        HOST = settings.EXPOSED_URL
+        return f'{HOST}/v1/images?offset={offset}&limit={limit}'

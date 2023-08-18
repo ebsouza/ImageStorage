@@ -7,5 +7,3 @@ RUN pip install --upgrade pip==22.3.1
 COPY . .
 
 RUN pip install --no-cache-dir -r requirements.txt
-
-RUN python -m pytest --cov=src/image tests/

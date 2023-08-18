@@ -3,18 +3,6 @@ version: "3.7"
 services:
   api:
     build: .
-    environment:
-      - APP_SETTINGS=production
-      - EXPOSED_URL=localhost:5000
-      - COLLECTION_LIMIT=5
-      - POSTGRES_USER=user123
-      - POSTGRES_PASSWORD=pass123
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_DB=db
-      - STORAGE_FS=Storage
-      - STORAGE_WEB=http://localhost:8080
-      - FILE_EXTENSION=jpg
     ports:
       - 5000:5000
     command: "uvicorn wsgi:app --host 0.0.0.0 --port 5000  --reload"
@@ -35,7 +23,7 @@ services:
       - POSTGRES_PASSWORD=pass123
       - POSTGRES_DB=db
     ports:
-      - "5433:5432"
+      - "5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready"]
       interval: 10s
@@ -45,11 +33,6 @@ services:
       driver: none
   worker:
     build: .
-    environment:
-      - APP_SETTINGS=production
-      - STORAGE_FS=Storage
-      - STORAGE_WEB=http://localhost:8080
-      - FILE_EXTENSION=jpg
     entrypoint: celery
     command: -A src.celery_app worker --concurrency=500 --pool=eventlet --loglevel=info
     depends_on:
